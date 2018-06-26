@@ -32,7 +32,7 @@
         <!-- jQuery -->
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
         <!-- Velocity -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/velocity/2.0.5/velocity.min.js" integrity="sha256-NtPQd/Jy7Ze2E72YS8WJDGMu6xFYomLYibE0hpyLTjs=" crossorigin="anonymous"></script>
+        <script src="js/velocity.min.js" type="application/javascript"></script>
 
 	</head>
 	<body>
@@ -90,10 +90,12 @@
 
 		<!-- Velocity Fade -->
 	    <script type="application/javascript">
-			$(".title").velocity("fadeIn", 1000);
-			$(".title-line").velocity("fadeIn", 1000);
-			$(".projects li").velocity("fadeIn", { delay: 300, duration: 1200 }).css("display","inline-block");
-			$(".communities li").velocity("fadeIn", { delay: 400, duration: 1200 }).css("display","inline-block");
+	        jQuery(window).on('load', function() { 
+	  			$(".title").velocity("fadeIn", 1000);
+				$(".title-line").velocity("fadeIn", 1000);
+				$(".projects li").velocity("fadeIn", { delay: 300, duration: 1200 }).css("display","inline-block");
+				$(".communities li").velocity("fadeIn", { delay: 400, duration: 1200 }).css("display","inline-block");
+	        });
 	    </script>
 
 	</body>
