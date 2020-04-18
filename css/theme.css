@@ -30,6 +30,7 @@ html, body {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
+  height: 100%;
   /*display: flex;
   flex-direction: column;
   flex: 0 0 auto;
@@ -45,17 +46,13 @@ html, body {
 }
 
 body {
-  /*display: flex;
+  display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;*/
   font-size: 1em;
   color: #fff;
   background: #171717 url("../img/bg.png") center center;
-  /*background-attachment: fixed;*/
   background-size: auto;
   background-size: contain;
-  /*background-repeat: no-repeat;*/
 }
 
 a {
@@ -319,6 +316,7 @@ ul.details li {
 }
 
 #layout-footer {
+  flex: 1 auto;
   padding: 3em 0 5em 0;
   border-top: 0px solid #54545b;
   background: #24292e;
