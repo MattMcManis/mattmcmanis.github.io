@@ -1,94 +1,65 @@
 @charset "utf-8";
 
-/* If Width Larger than 1366px */
-@media only screen and (min-width: 1367px) {
-}
-/* If Width Smaller than 1366px */
-@media only screen and (max-width: 1366px) {
-}
-/* If Width Smaller than 768px */
-@media only screen and (max-width: 768px) {
-}
-/* If Width Larger than 480px */
-@media only screen and (min-width: 481px) {
-  ul.projects li {
-    display: inline-block !important;
-  }
-}
-/* If Width Smaller than 480px */
-@media only screen and (max-width: 480px) {
-  .title {
-    font-size: 3em !important;
-    margin: 0 0 0.5em 0 !important;
-  }
-  ul.projects li {
-    display: block !important;
-    margin: 0.5em 0 !important;
-  }
-}
-/* If Height Larger than 480px */
-@media only screen and (min-height: 480px) {
-}
-/* If Height Smaller than 480px */
-@media only screen and (max-height: 480px) {
-}
-/* If Height Larger than 720px */
-@media only screen and (min-height: 720px) {
-  .container {
-    margin: -15% auto 0 auto !important;
-  }
-}
-/* If Height Smaller than 720px */
-@media only screen and (max-height: 720px) {
-}
-
 @font-face {
-    font-family: 'calendas_plus';
-    src: url('../fonts/calendas_plus-webfont.eot');
-    src: url('../fonts/calendas_plus-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/calendas_plus-webfont.woff2') format('woff2'),
-         url('../fonts/calendas_plus-webfont.woff') format('woff'),
-         url('../fonts/calendas_plus-webfont.ttf') format('truetype'),
-         url('../fonts/calendas_plus-webfont.svg#calendas_plusregular') format('svg');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'calendas_plus';
+  src: url('../fonts/calendas_plus-webfont.eot');
+  src: url('../fonts/calendas_plus-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/calendas_plus-webfont.woff2') format('woff2'),
+       url('../fonts/calendas_plus-webfont.woff') format('woff'),
+       url('../fonts/calendas_plus-webfont.ttf') format('truetype'),
+       url('../fonts/calendas_plus-webfont.svg#calendas_plusregular') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 @font-face {
-    font-family: 'calendas_plus_italic';
-    src: url('../fonts/calendas_plus_italic-webfont.eot');
-    src: url('../fonts/calendas_plus_italic-webfont.eot?#iefix') format('embedded-opentype'),
-         url('../fonts/calendas_plus_italic-webfont.woff2') format('woff2'),
-         url('../fonts/calendas_plus_italic-webfont.woff') format('woff'),
-         url('../fonts/calendas_plus_italic-webfont.ttf') format('truetype'),
-         url('../fonts/calendas_plus_italic-webfont.svg#calendas_plusitalic') format('svg');
-    font-weight: normal;
-    font-style: normal;
+  font-family: 'calendas_plus_italic';
+  src: url('../fonts/calendas_plus_italic-webfont.eot');
+  src: url('../fonts/calendas_plus_italic-webfont.eot?#iefix') format('embedded-opentype'),
+       url('../fonts/calendas_plus_italic-webfont.woff2') format('woff2'),
+       url('../fonts/calendas_plus_italic-webfont.woff') format('woff'),
+       url('../fonts/calendas_plus_italic-webfont.ttf') format('truetype'),
+       url('../fonts/calendas_plus_italic-webfont.svg#calendas_plusitalic') format('svg');
+  font-weight: normal;
+  font-style: normal;
 }
 
+html {
+  font-size: 15px;
+}
 html, body {
-  display: flex;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  /*display: flex;
   flex-direction: column;
   flex: 0 0 auto;
-  height: 100%;
+  height: 100%;*/
   margin: 0;
   padding: 0;
-  font-family: 'calendas_plus', serif;
+  font-family: 'Open Sans', sans-serif;
   text-rendering: optimizeLegibility;
   font-feature-settings: "kern";
   -webkit-font-feature-settings: "kern";
   -moz-font-feature-settings: "kern";
   -moz-font-feature-settings: "kern=1";
 }
+
 body {
-  display: flex;
+  /*display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  background: #171717;
-  color: #5d5d64;
+  justify-content: center;*/
+  font-size: 1em;
+  color: #fff;
+  background: #171717 url("../img/bg.png") center center;
+  /*background-attachment: fixed;*/
+  background-size: auto;
+  background-size: contain;
+  /*background-repeat: no-repeat;*/
 }
+
 a {
-  color: #5d5d64;
+  color: #006bff; /*b5babf*/
   text-decoration: none;
   -o-transition:.4s;
   -ms-transition:.4s;
@@ -97,72 +68,178 @@ a {
   transition:.4s;
 }
 a:hover {
-  color: #fff; /* #af8f1c */
+  color: #fff;
   text-decoration: none;
 }
-img {
-  border: 0;
-}
-li img {
-  display: block;
-}
-.container {
-  width: 100%;
-  max-width: 1170px;
-  /*height: 50%;*/
-  margin: 0 auto;
-  padding: 0;
-  text-align: center;
-}
-.title {
-  opacity: 0;
+
+h1,h2,h3,h4,h5,h6 {
   font-family: 'calendas_plus', serif;
-  font-size: 5em;
-  letter-spacing: -2px;
-  line-height: 1em;
-  margin: 0 0 0.2em 0;
-  cursor: default;
 }
-/*.title-line {
-    list-style-type: none;
-    height: 1px;
-    width: 90%;
-    margin: 0 auto 2em auto;
-    background: -moz-linear-gradient(left, rgba(0,0,0,0) 0%, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
-    background: -webkit-linear-gradient(left, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 50%,rgba(0,0,0,0) 100%);
-    background: linear-gradient(to right, rgba(0,0,0,0) 0%,rgba(0,0,0,1) 50%,rgba(0,0,0,0) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00000000', endColorstr='#00000000',GradientType=1 );
-}*/
-ul.projects {
+
+.section {
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  position: relative;
+  margin: 0 0 1em 0;
+  padding: 1.8em 0 0 0;
+}
+
+#layout-header {
+  margin: 0 0 1em 0;
+  padding: 1em 0 1em 0;
+  border-bottom: 0px solid #54545b;
+  background: #24292e;
+  -webkit-box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.15);
+  -moz-box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.15);
+  box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.15);
+}
+
+.logo {
+  font-family: 'calendas_plus', serif;
+  font-size: 3em;
+  color: #dce0e5;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.15);
+}
+a.logo:hover {
+  color: #fff;
+}
+
+.navbar {
+  padding: .5rem 0 !important; /*bootstrap override*/
+}
+.navbar-brand {
+  margin-right: 2rem !important; /*bootstrap override*/
+}
+.navbar-expand-lg .navbar-nav .nav-link {
+  padding-right: .7rem !important; /*bootstrap override*/
+  padding-left: .7rem !important; /*bootstrap override*/
+}
+.nav-link {
+  color: #fff;
+}
+.nav-link:hover {
+  color: #006bff;
+}
+
+.page-title {
+  margin: 0 0 1.2em 0;
+  color: #b5babf;
+}
+
+#projects {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
-ul.projects li {
-  opacity: 0;
-  display: inline-block;
-  position: relative;
-  margin: 0 1em;
+
+#projects div {
   list-style-type: none;
-  text-align: center;
-  font-size: 2em;
 }
-/* ul.projects li:hover:before {
-    content: "~";
-    position: absolute;
-    bottom: -15px;
-    left:calc(50% - 4px);
-    cursor: default;
-} */
-ul.communities {
-  margin: 2em 0 0 0;
+#projects > div {
+  display: flex;
+  flex-direction: row;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  margin: 0 0 2.2em 0;
+  padding: 1.8em 2em;
+  border: 0px solid #62636a;
+  background: #24292e;
+  border-radius: 0 0 0.45em 0;
+  -webkit-box-shadow: 2px 3px 8px 0px rgba(0,0,0,0.15);
+  -moz-box-shadow: 2px 3px 8px 0px rgba(0,0,0,0.15);
+  box-shadow: 2px 3px 8px 0px rgba(0,0,0,0.15);
+}
+#projects > div:first-child {
+  margin: 0 0 2.2em 0;
+}
+
+#projects .icon {
+  display: flex;
+  justify-content: center;
+  vertical-align: top;
+  margin: 0 2em 0 0;
+  width: 128px;
+}
+#projects .icon img {
+  margin: 0.3em 0 0 0;
+  width: 110px;
+}
+
+#projects .info {
+  vertical-align: top;
+}
+
+#projects a.title {
+  margin: 0 0 0.3em 0;
+  font-family: 'calendas_plus', serif;
+  color: #fff;
+}
+#projects a:hover.title {
+  color: #006bff;
+}
+#projects a.title h2 {
+  display: inline-block;
+  font-size: 1.8em;
+  font-weight: 400;
+}
+
+.description {
+  margin-bottom: 1.1em;
+  color: #fff;
+}
+
+ul.tags {
+  margin: 0 0 0.6em 0;
   padding: 0;
 }
-ul.communities li {
-  opacity: 0;
-  display: inline-block !important;
-  position: relative;
-  margin: 0 1em;
+ul.tags li {
+  display: inline-block;
+  margin: 0 0.6em 0.6em 0;
   list-style-type: none;
-  text-align: center;
+}
+ul.tags li a {
+  padding: 0.2em 0.5em;
+  border-radius: 0.2em;
+  font-size: 0.9em;
+  color: #fff;
+  background: #4c515c;
+}
+ul.tags li a:hover {
+  color: #fff;
+  background: #006bff;
+}
+
+ul.details {
+  margin: 0;
+  padding: 0;
+}
+ul.details li {
+  display: inline-block;
+  margin: 0 1em 0.6em 0;
+}
+
+.back-to-top {
+  text-align: right;
+}
+
+.copyright {
+  font-family: 'calendas_plus', serif;
   font-size: 1.1em;
+  text-align: left;
+  color: #b5babf;
+}
+
+#layout-footer {
+  padding: 3em 0 5em 0;
+  border-top: 0px solid #54545b;
+  background: #24292e;
+  -webkit-box-shadow: 0px -12px 12px 0px rgba(0,0,0,0.05);
+  -moz-box-shadow: 0px -12px 12px 0px rgba(0,0,0,0.05);
+  box-shadow: 0px -12px 12px 0px rgba(0,0,0,0.05);
 }
