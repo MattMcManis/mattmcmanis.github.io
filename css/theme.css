@@ -52,7 +52,6 @@ body {
   color: #fff;
   background: #171717 url("../img/bg.png") center center;
   background-size: auto;
-  background-size: contain;
 }
 
 a {
