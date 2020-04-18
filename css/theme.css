@@ -108,8 +108,22 @@ a.logo:hover {
 .navbar {
   padding: .5rem 0 !important; /*bootstrap override*/
 }
-.navbar-brand {
-  margin-right: 2rem !important; /*bootstrap override*/
+/*.navbar-brand {
+  margin-right: 2rem !important; 
+}*/
+/* If Width Larger than 414px */
+@media only screen and (min-width: 415px) {
+  .navbar-brand {
+    margin-right: 2rem !important; /*bootstrap override*/
+  }
+}
+/* If Width Smaller or Equal to 414px */
+@media only screen and (max-width: 414px) {
+  .navbar-brand {
+    margin-right: 0 !important; /*bootstrap override*/
+    text-align: center;
+    width: 100%;
+  }
 }
 .navbar-expand-lg .navbar-nav .nav-link {
   padding-right: .7rem !important; /*bootstrap override*/
@@ -125,6 +139,12 @@ a.logo:hover {
 .page-title {
   margin: 0 0 1.2em 0;
   color: #b5babf;
+}
+/* If Width Smaller or Equal to 414px */
+@media only screen and (max-width: 414px) {
+  .page-title {
+      text-align: center;
+  }
 }
 
 #projects {
@@ -142,7 +162,6 @@ a.logo:hover {
 }
 #projects > div {
   display: flex;
-  flex-direction: row;
   box-sizing: border-box;
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
@@ -155,6 +174,18 @@ a.logo:hover {
   -moz-box-shadow: 2px 3px 8px 0px rgba(0,0,0,0.15);
   box-shadow: 2px 3px 8px 0px rgba(0,0,0,0.15);
 }
+/* If Width Larger than 414px */
+@media only screen and (min-width: 415px) {
+  #projects > div {
+    flex-direction: row;
+  }
+}
+/* If Width Smaller or Equal to 414px */
+@media only screen and (max-width: 414px) {
+  #projects > div {
+    flex-direction: column;
+  }
+}
 #projects > div:first-child {
   margin: 0 0 2.2em 0;
 }
@@ -163,8 +194,20 @@ a.logo:hover {
   display: flex;
   justify-content: center;
   vertical-align: top;
-  margin: 0 2em 0 0;
-  width: 128px;
+}
+/* If Width Larger than 414px */
+@media only screen and (min-width: 415px) {
+  #projects .icon {
+    margin: 0 2em 0 0;
+    width: 128px;
+  }
+}
+/* If Width Smaller or Equal to 414px */
+@media only screen and (max-width: 414px) {
+  #projects .icon {
+    margin: 0 2em 1.1em 0;
+    width: 100%;
+  }
 }
 #projects .icon img {
   margin: 0.3em 0 0 0;
@@ -173,6 +216,12 @@ a.logo:hover {
 
 #projects .info {
   vertical-align: top;
+}
+/* If Width Smaller or Equal to 414px */
+@media only screen and (max-width: 414px) {
+  #projects .info {
+    text-align: center;
+  }
 }
 
 #projects a.title {
@@ -190,8 +239,19 @@ a.logo:hover {
 }
 
 .description {
-  margin-bottom: 1.1em;
   color: #fff;
+}
+/* If Width Larger than 414px */
+@media only screen and (min-width: 415px) {
+  .description {
+    margin-bottom: 1.1em;
+  }
+}
+/* If Width Smaller or Equal to 414px */
+@media only screen and (max-width: 414px) {
+  .description {
+    margin-bottom: 1.6em;
+  }
 }
 
 ul.tags {
@@ -224,15 +284,38 @@ ul.details li {
   margin: 0 1em 0.6em 0;
 }
 
-.back-to-top {
-  text-align: right;
+/*.back-to-top {
+}*/
+/* If Width Larger than 414px */
+@media only screen and (min-width: 415px) {
+  .back-to-top {
+    text-align: right;
+  }
+}
+/* If Width Smaller or Equal to 414px */
+@media only screen and (max-width: 414px) {
+  .back-to-top {
+    text-align: center;
+  }
 }
 
 .copyright {
   font-family: 'calendas_plus', serif;
   font-size: 1.1em;
-  text-align: left;
   color: #b5babf;
+}
+/* If Width Larger than 414px */
+@media only screen and (min-width: 415px) {
+  .copyright {
+    text-align: left;
+  }
+}
+/* If Width Smaller or Equal to 414px */
+@media only screen and (max-width: 414px) {
+  .copyright {
+    margin: 0 0 1em 0;
+    text-align: center;
+  }
 }
 
 #layout-footer {
