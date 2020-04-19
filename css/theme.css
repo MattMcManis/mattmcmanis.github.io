@@ -80,7 +80,7 @@ h1,h2,h3,h4,h5,h6 {
 
 #layout-header {
   margin: 0 0 1em 0;
-  padding: 1em 0 1em 0;
+  padding: 0.5em 0 0.9em 0;
   border-bottom: 0px solid #54545b;
   background: #24292e;
   -webkit-box-shadow: 0px 2px 8px 0px rgba(0,0,0,0.15);
@@ -159,7 +159,7 @@ a.logo:hover {
   -moz-box-sizing: border-box;
   -webkit-box-sizing: border-box;
   margin: 0 0 2.2em 0;
-  padding: 1.8em 2em;
+  padding: 1.7em 2.2em;
   border: 0px solid #62636a;
   background: #24292e;
   border-radius: 0 0 0.45em 0;
@@ -192,7 +192,7 @@ a.logo:hover {
 @media only screen and (min-width: 415px) {
   #projects .icon {
     margin: 0 2em 0 0;
-    width: 128px;
+    width: 100px;
   }
 }
 /* If Width Smaller or Equal to 414px */
@@ -204,7 +204,7 @@ a.logo:hover {
 }
 #projects .icon img {
   margin: 0.3em 0 0 0;
-  width: 110px;
+  width: 100px;
 }
 
 #projects .info {
@@ -256,6 +256,9 @@ ul.tags li {
   margin: 0 0.6em 0.6em 0;
   list-style-type: none;
 }
+ul.tags li:last-child {
+  margin: 0 0 0.6em 0;
+}
 ul.tags li a {
   padding: 0.2em 0.5em;
   border-radius: 0.2em;
@@ -269,12 +272,37 @@ ul.tags li a:hover {
 }
 
 ul.details {
-  margin: 0;
   padding: 0;
 }
 ul.details li {
   display: inline-block;
-  margin: 0 1em 0.6em 0;
+}
+ul.details li:last-child {
+  display: inline-block;
+}
+/* If Width Larger than 414px */
+@media only screen and (min-width: 415px) {
+  ul.details {
+    margin: 0 0 0.4em 0;
+  }
+  ul.details li {
+    margin: 0 1.2em 0 0;
+  }
+  ul.details li:last-child {
+    margin: 0;
+  }
+}
+/* If Width Smaller or Equal to 414px */
+@media only screen and (max-width: 414px) {
+  ul.details {
+    margin: 0;
+  }
+  ul.details li {
+    margin: 0 1.2em 0.6em 0;
+  }
+  ul.details li:last-child {
+    margin: 0 0 0.6em 0;
+  }
 }
 
 /*.back-to-top {
@@ -313,7 +341,7 @@ ul.details li {
 
 #layout-footer {
   flex: 1 auto;
-  padding: 3em 0 5em 0;
+  padding: 2.8em 0 6em 0;
   border-top: 0px solid #54545b;
   background: #24292e;
   -webkit-box-shadow: 0px -12px 12px 0px rgba(0,0,0,0.05);
