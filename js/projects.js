@@ -24,7 +24,7 @@ function Generate() {
 			// Details
 			[
 				["C#", "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)"],
-				["GNU General Public License v3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
+				["GPL-3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
 				["GitHub", "https://github.com/MattMcManis/Axiom"],
 				["Wiki", "https://github.com/MattMcManis/Axiom/wiki"],
 			],
@@ -50,7 +50,7 @@ function Generate() {
 			// Details
 			[
 				["C#", "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)"],
-				["GNU General Public License v3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
+				["GPL-3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
 				["GitHub", "https://github.com/MattMcManis/Glow"],
 				["Wiki", "https://mpv.io/manual/stable/"],
 			],
@@ -100,7 +100,7 @@ function Generate() {
 			// Details
 			[
 				["C#", "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)"],
-				["GNU General Public License v3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
+				["GPL-3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
 				["GitHub", "https://github.com/MattMcManis/Triangulum"],
 			],
 		],
@@ -126,7 +126,7 @@ function Generate() {
 			[
 				["C#", "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)"],
 				["JS", "https://en.wikipedia.org/wiki/JavaScript"],
-				["GNU General Public License v3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
+				["GPL-3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
 				["GitHub", "https://github.com/MattMcManis/Aleph"],
 			],
 		],
@@ -149,7 +149,7 @@ function Generate() {
 			// Details
 			[
 				["C#", "https://en.wikipedia.org/wiki/C_Sharp_(programming_language)"],
-				["GNU General Public License v3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
+				["GPL-3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
 				["GitHub", "https://github.com/MattMcManis/Ink"],
 			],
 		],
