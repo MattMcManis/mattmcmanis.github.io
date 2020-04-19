@@ -1,17 +1,3 @@
-// Lists
-function Lists(list) {
-	var html = '';
-
-	for (var i = 0; i < list.length; i++) {
-		html += 
-		'<li>' + 
-			'<a href=\"' + list[i][1] + '\" target=\"_blank\">' + list[i][0] + '</a>' + 
-		'</li>';
-	}
-
-	return html;
-}
-
 // Generate HTML
 function Generate() {
 	// Projects Array
@@ -23,7 +9,7 @@ function Generate() {
 			"https://axiomui.github.io",
 			// Description
 			"An FFmpeg GUI for Windows",
-			// Icon / URL
+			// Icon
 			"axiom.png",
 			// Tags
 			[
@@ -50,7 +36,7 @@ function Generate() {
 			"https://glowmpv.github.io",
 			// Description
 			"mpv Config File Generator for Windows",
-			// Icon / URL
+			// Icon
 			"glow.png",
 			// Tags
 			[
@@ -76,7 +62,7 @@ function Generate() {
 			"https://github.com/MattMcManis/Ultra",
 			// Description
 			"Mupen64Plus N64 Emulator Frontend for Windows",
-			// Icon / URL
+			// Icon
 			"ultra.png",
 			// Tags
 			[
@@ -102,7 +88,7 @@ function Generate() {
 			"https://github.com/MattMcManis/Triangulum",
 			// Description
 			"Pascal's Triangle Generator",
-			// Icon / URL
+			// Icon
 			"triangulum.png",
 			// Tags
 			[
@@ -125,7 +111,7 @@ function Generate() {
 			"https://hebrewnumerals.github.io",
 			// Description
 			"Hebrew Numerals Converter",
-			// Icon / URL
+			// Icon
 			"aleph.png",
 			// Tags
 			[
@@ -151,7 +137,7 @@ function Generate() {
 			"https://github.com/MattMcManis/Ink",
 			// Description
 			"Keyboard Typewriter Emulator",
-			// Icon / URL
+			// Icon
 			"ink.png",
 			// Tags
 			[
@@ -174,7 +160,7 @@ function Generate() {
 			"https://glytch.bitbucket.io",
 			// Description
 			"Video Game & Technology Resource",
-			// Icon / URL
+			// Icon
 			"glytch.png",
 			// Tags
 			[
@@ -209,9 +195,13 @@ function Generate() {
 	    	'</div>' +
 	    	'<div class=\"info\">' +
 	    		'<a class=\"title\" href=\"' + projects[i][1] + '\" target=\"_blank\">' + 
-	    			'<h2>' + projects[i][0] + '</h2>' + 
+	    			'<h2>' + 
+	    				projects[i][0] + 
+    				'</h2>' + 
     			'</a>' +
-	    		'<p class=\"description\">' + projects[i][2] + '</p>' +
+	    		'<p class=\"description\">' + 
+	    			projects[i][2] + 
+    			'</p>' +
 	    		'<ul class=\"tags\">' +
 	    			Lists(projects[i][4]) +
 	    		'</ul>' +
@@ -223,4 +213,18 @@ function Generate() {
 	}
 
 	list.innerHTML = html;
+}
+
+// Lists
+function Lists(list) {
+	var html = '';
+
+	for (var i = 0; i < list.length; i++) {
+		html += 
+		'<li>' + 
+			'<a href=\"' + list[i][1] + '\" target=\"_blank\">' + list[i][0] + '</a>' + 
+		'</li>';
+	}
+
+	return html;
 }
