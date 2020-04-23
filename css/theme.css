@@ -83,6 +83,7 @@ h1,h2,h3,h4,h5,h6 {
 }
 
 #layout-header {
+  opacity: 0; /* Velocity JS Fade In */
   margin: 0 0 1.2em 0;
   padding: 0.9em 0 1.5em 0;
   border-bottom: 0px solid #54545b;
@@ -145,6 +146,7 @@ a.logo:hover {
 }
 
 .page-title {
+  opacity: 0; /* Velocity JS Fade In */
   margin: 0 0 1.2em 0;
   color: #dce0e5;
 }
@@ -194,6 +196,10 @@ a.logo:hover {
     flex-direction: column;
     padding: 1.4em;
   }
+}
+
+#projects .project {
+  opacity: 0; /* Velocity JS Fade In */
 }
 
 #projects .icon {
@@ -364,6 +370,7 @@ ul.details li:last-child {
 }
 
 #layout-footer {
+  opacity: 0; /* Velocity JS Fade In */
   flex: 1 auto;
   padding: 2.8em 0 6em 0;
   border-top: 0px solid #54545b;
