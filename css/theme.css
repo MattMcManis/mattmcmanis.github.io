@@ -145,6 +145,13 @@ a.logo:hover {
   color: #006bff;
 }
 
+
+/* Layout Content 
+#layout-header {
+  opacity: 0; Velocity JS Fade In
+}*/
+
+
 .page-title {
   opacity: 0; /* Velocity JS Fade In */
   margin: 0 0 1.2em 0;
