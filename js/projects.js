@@ -150,31 +150,5 @@ var projects =
 			["GPL-3.0",	"https://www.gnu.org/licenses/gpl-3.0.en.html"],
 			["GitHub", "https://github.com/MattMcManis/Ink"],
 		],
-	],
-
-	[	// Title
-		"glytch",
-		// URL
-		"https://glytch.bitbucket.io",
-		// Description
-		"Video Game & Technology Resource",
-		// Icon
-		"glytch.png",
-		// Tags
-		[
-			["video-game", "https://en.wikipedia.org/wiki/Video_game"],
-			["technology", "https://en.wikipedia.org/wiki/Technology"],
-			["resource", "https://en.wikipedia.org/wiki/Encyclopedia"],
-			["guide","https://en.wikipedia.org/wiki/User_guide"],
-			["wiki","https://en.wikipedia.org/wiki/Wiki"],
-		],
-		// Details
-		[
-			["HTML", "https://en.wikipedia.org/wiki/HTML"],
-			["CSS", "https://en.wikipedia.org/wiki/Cascading_Style_Sheets"],
-			["JS", "https://en.wikipedia.org/wiki/JavaScript"],
-			["Go", "https://golang.org"],
-			["Hugo", "https://gohugo.io"],
-		],
 	]
 ];
