@@ -1,16 +1,16 @@
 window.addEventListener("DOMContentLoaded", function () {
     // Configuration parameters
     const CONFIG = {
-        numLargeStars: 90,
-        numMediumStars: 340,
-        numSmallStars: 2500,
+        numLargeStars: 140,
+        numMediumStars: 400,
+        numSmallStars: 2800,
         numTinyStars: 10000,
         // Brightness controls (0-100)
         brightness: {
-            large: 60,
-            medium: 40,
-            small: 30,
-            tiny: 15
+            large: 65,
+            medium: 45,
+            small: 35,
+            tiny: 20
         },
         starburst: {
             angle: 0, // Starburst angle in degrees
@@ -380,7 +380,7 @@ window.addEventListener("DOMContentLoaded", function () {
             if (star.hasStarburst) drawStarburst(ctx, star, star.opacity);
 
             // Draw glow
-            const glowRadius = star.size * 2.8;
+            const glowRadius = star.size * 2.9;
             const gradient = ctx.createRadialGradient(
                 star.x, star.y, 0,
                 star.x, star.y, glowRadius
