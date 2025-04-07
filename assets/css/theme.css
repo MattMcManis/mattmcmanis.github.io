@@ -185,6 +185,7 @@ ul#sites {
 	ul#sites {
 		font-size: 1.9rem;
 		padding: 0.8rem 0 0.8rem 0;
+		column-gap: 2rem;
 	}
 }
 
@@ -205,8 +206,9 @@ ul#sites {
 		padding: 1.2rem 0 1.3rem 0;
     }
 	ul#sites {
-		font-size: 1.65rem;
+		font-size: 1.75rem;
 		padding: 0.8rem 0 0.8rem 0;
+		column-gap: 1.5rem;
 	}
 }
 
@@ -225,7 +227,6 @@ ul#sites {
 	opacity: 0;
 	align-content: center;
 	align-items: center;
-	column-gap: 2rem;
 	display: inline-flex;
 	font-family: 'calendas_plus', serif;
 	justify-content: center;
