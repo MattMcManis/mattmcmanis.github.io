@@ -46,8 +46,8 @@ window.addEventListener("DOMContentLoaded", function () {
   const galaxies = []; // Declare galaxies array
 
   function getGalaxyCountByResolution() {
-    const screenHeight = window.screen.height;
-    const screenWidth = window.screen.width;
+    const screenHeight = window.innerHeight;
+    const screenWidth = window.innerWidth;
     const isMobile = screenWidth < 768;
 
     if (!isMobile) {
@@ -442,8 +442,8 @@ window.addEventListener("DOMContentLoaded", function () {
     canvas.height = window.innerHeight;
 
     initializeGalaxies();
-
     drawGalaxies();
+	
     if (chromaticAberration.enabled) {
       applyChromaticAberration();
     }
