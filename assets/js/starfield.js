@@ -14,8 +14,8 @@ window.addEventListener("DOMContentLoaded", function () {
 	},
 	starSizes: {
 	  large: { min: 2.8, max: 3.5, enabled: true },
-	  medium: { min: 1.6, max: 2.7, enabled: true },
-	  small: { min: 0.8, max: 1.5, enabled: true },
+	  medium: { min: 1.7, max: 2.7, enabled: true },
+	  small: { min: 0.8, max: 1.6, enabled: true },
 	  tiny: { min: 0.3, max: 0.7, enabled: true },
 	},
 	brightness: {
@@ -53,7 +53,7 @@ window.addEventListener("DOMContentLoaded", function () {
 	blur: {
 	  large: { amount: 0, enabled: false },
 	  medium: { amount: 0, enabled: false },
-	  small: { amount: 0.1, enabled: true },
+	  small: { amount: 0.1, enabled: false },
 	  tiny: { amount: 0.1, enabled: false },
 	},
 	distribution: 0.0,
