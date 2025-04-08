@@ -4,6 +4,11 @@
 window.addEventListener("DOMContentLoaded", function () {
 	const canvas = document.getElementById('galaxiesCanvas');
 	const ctx = canvas.getContext('2d');
+	
+	// Check for Chromium-based Browsers
+	function isChromium() {
+	  return (/Chrome/.test(navigator.userAgent) || /Edg/.test(navigator.userAgent) || /Chromium/.test(navigator.userAgent));
+	}
 
 	const baseWidth = 1920;
 	const baseHeight = 1080;
@@ -19,6 +24,11 @@ window.addEventListener("DOMContentLoaded", function () {
 		offsetRed: 2.0,
 		offsetGreen: 0.0,
 		offsetBlue: -2.0
+	};
+	
+	const gaussianBlur = {
+		enabled: true,
+		amount: 2.0
 	};
 
 	const galaxyOTypeColors = ['#957ff7', '#adb2ff'];
@@ -376,6 +386,20 @@ window.addEventListener("DOMContentLoaded", function () {
 		return rgbToHex(Math.min(255, Math.max(0, r)), Math.min(255, Math.max(0, g)), Math.min(255, Math.max(0, b)));
 	}
 
+	// Brighten Canvas for Chromium-based Browsers
+	function brightenCanvas(ctx, canvasWidth, canvasHeight, brightnessFactor) {
+	  const imageData = ctx.getImageData(0, 0, canvasWidth, canvasHeight);
+	  const data = imageData.data;
+
+	  for (let i = 0; i < data.length; i += 4) {
+		data[i] = Math.min(255, data[i] * brightnessFactor); // Red
+		data[i + 1] = Math.min(255, data[i + 1] * brightnessFactor); // Green
+		data[i + 2] = Math.min(255, data[i + 2] * brightnessFactor); // Blue
+	  }
+
+	  ctx.putImageData(imageData, 0, 0);
+	}
+
 	// Resizes the canvas and redraws galaxies
 	function resizeCanvas() {
 		canvas.width = window.innerWidth;
@@ -385,10 +409,15 @@ window.addEventListener("DOMContentLoaded", function () {
 		const isMobile = window.innerWidth < 768;
 		if (chromaticAberration.enabled && !isMobile)
 			applyChromaticAberration();
-		auraEffect(); // First Aura Effect
+		auraEffect(); // First Aura Effect if Desktop or Mobile
 		if (!isMobile)
 			auraEffect(); // Second Aura Effect if Desktop only
-		blurCanvasContent();
+		
+		if (gaussianBlur.enabled)
+			blurCanvasContent();
+		
+		if (isChromium()) 
+			brightenCanvas(ctx, canvas.width, canvas.height, 1.7); // Brighten the entire canvas by twice as much
 	}
 
 	// Applies chromatic aberration effect
@@ -456,7 +485,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		const height= canvas.height;
 		const imageData = ctx.getImageData(0, 0, width, height);
 		const data = imageData.data;
-		const blurredData = applySeparableGaussianBlur(data, width, height, 2);
+		const blurredData = applySeparableGaussianBlur(data, width, height, gaussianBlur.amount);
 		imageData.data.set(blurredData);
 		ctx.putImageData(imageData, 0, 0);
 	}
