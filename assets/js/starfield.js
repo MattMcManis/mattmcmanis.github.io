@@ -1,10 +1,10 @@
 window.addEventListener("DOMContentLoaded", function () {
     // Configuration parameters
     const CONFIG = {
-        numLargeStars: 140,
-        numMediumStars: 400,
-        numSmallStars: 2800,
-        numTinyStars: 10000,
+        numLargeStars: 140, // 140
+        numMediumStars: 340, // 340
+        numSmallStars: 2800, // 2800
+        numTinyStars: 8000, //10000
         // Brightness controls (0-100)
         brightness: {
             large: 65,
@@ -25,7 +25,7 @@ window.addEventListener("DOMContentLoaded", function () {
             // A-type stars (Blue-White)
 			'#91c2ff': 3, '#cef3ff': 10,
             // F-type stars (White)
-			'#ffffff': 60, '#ffffe3': 10,
+			'#ffffff': 70, '#ffffe3': 10,
             // G-type stars (Yellow)
             '#fcfc8f': 1, '#fef3b9': 1, 
             // K-type stars (Orange)
@@ -42,13 +42,13 @@ window.addEventListener("DOMContentLoaded", function () {
 			// A-type stars (Blue-White)
             '#76cffa': 1, // Light Sky Blue
 			// F-type stars (Yellow-White)
-			'#ffffff': 5, // Pure white
+			'#ffffff': 8, // Pure white
             '#ffe687': 3, // Bright yellow
 			// K-type stars (Orange)
             '#ffab1a': 1, // Deep orange
             '#ff7f10': 1, // Red-orange (Betelgeuse, Antares)
 			// M-type stars (Red)
-            '#ff5b5b': 3, // Light Red
+            '#ff5b5b': 2, // Light Red
 			// Unique
             '#3ffab2': 1, // Medium Spring Green
             '#48D1CC': 1, // Medium Turquoise
@@ -57,7 +57,7 @@ window.addEventListener("DOMContentLoaded", function () {
         // Chromatic Aberration
         chromaticAberration: {
             enabled: true,
-            opacity: 0.3, // Overall opacity of the effect
+            opacity: 0.25, // Overall opacity of the effect
             // Parameters per star size
             large: {
                 intensity: 0.15, // 0-1 range
@@ -228,28 +228,28 @@ window.addEventListener("DOMContentLoaded", function () {
 					this.size = 3 + Math.random() * 2; // Size range: 3 to 5
 					this.hasStarburst = true;
 					this.color = getRandomWeightedColor(extendedStarColors);
-					this.twinkleAmount = 0.075 + Math.random() * 0.1;
+					this.twinkleAmount = 0.025 + Math.random() * 0.05;
 					break;
 				case "medium":
 					// Size range: closer to large, with some overlap
 					this.size = 1.6 + Math.random() * 1.4; // Size range: 1.6 to 3
 					this.hasStarburst = Math.random() > 0.3;
-					this.color = getRandomWeightedColor(starColors);
-					this.twinkleAmount = 0.15 + Math.random() * 0.15;
+					this.color = getRandomWeightedColor(extendedStarColors);
+					this.twinkleAmount = 0.05 + Math.random() * 0.15;
 					break;
 				case "small":
 					// Size range: between medium and tiny
 					this.size = 0.8 + Math.random() * 0.8; // Size range: 0.8 to 1.6
 					this.hasStarburst = Math.random() > 0.7;
 					this.color = getRandomWeightedColor(starColors);
-					this.twinkleAmount = 0.2 + Math.random() * 0.2;
+					this.twinkleAmount = 0.05 + Math.random() * 0.2;
 					break;
 				case "tiny":
 				default:
 					this.size = 0.3 + Math.random() * 0.4; // Size range: 0.3 to 0.7
 					this.hasStarburst = false;
 					this.color = getRandomWeightedColor(starColors);
-					this.twinkleAmount = 0.25 + Math.random() * 0.25;
+					this.twinkleAmount = 0.05 + Math.random() * 0.1;
 					this.staticOpacity = 0.3 + Math.random() * 0.2;
 					break;
             }
@@ -299,7 +299,7 @@ window.addEventListener("DOMContentLoaded", function () {
                 }
                 const flickerPhase = this.flickerTime / this.flickerDuration;
                 const flickerPattern = Math.sin(flickerPhase * Math.PI * 8) * 0.5 + 0.5;
-                this.opacity = this.baseOpacity * (1 + flickerPattern * 0.5);
+                this.opacity = this.baseOpacity * (0.5 + flickerPattern * 0.7);
                 return;
             } else if (Math.random() < this.flickerProbability) {
                 this.flickering = true;
@@ -349,9 +349,9 @@ window.addEventListener("DOMContentLoaded", function () {
             sinValues[i] = Math.sin(angles[i]);
         }
         return (ctx, star, opacity) => {
-            const rayLength = star.size * (6 + Math.random() * 2);
-            const lineWidth = star.size * 0.2;
-            const rayOpacity = opacity * 0.9;
+            const rayLength = star.size * (6 + Math.random() * 1.1); // default 5 and 2
+            const lineWidth = star.size * 0.3;
+            const rayOpacity = opacity * 0.80;
             for (let i = 0; i < 4; i++) {
                 const endX = star.x + cosValues[i] * rayLength;
                 const endY = star.y + sinValues[i] * rayLength;
@@ -380,15 +380,16 @@ window.addEventListener("DOMContentLoaded", function () {
             if (star.hasStarburst) drawStarburst(ctx, star, star.opacity);
 
             // Draw glow
-            const glowRadius = star.size * 2.9;
+            const glowRadius = star.size * 3.5;
             const gradient = ctx.createRadialGradient(
                 star.x, star.y, 0,
                 star.x, star.y, glowRadius
             );
 			gradient.addColorStop(0, `rgba(255, 255, 255, 1)`); // White
 			gradient.addColorStop(0.2, `rgba(255, 255, 255, 0.9)`); // White
-			gradient.addColorStop(0.5, `rgba(${hexToRgb(star.color).r}, ${hexToRgb(star.color).g}, ${hexToRgb(star.color).b}, 0.35)`);
-			gradient.addColorStop(1, `rgba(${hexToRgb(star.color).r}, ${hexToRgb(star.color).g}, ${hexToRgb(star.color).b}, 0)`);
+			gradient.addColorStop(0.45, `rgba(${hexToRgb(star.color).r}, ${hexToRgb(star.color).g}, ${hexToRgb(star.color).b}, 0.4)`);
+			//gradient.addColorStop(1, `rgba(${hexToRgb(star.color).r}, ${hexToRgb(star.color).g}, ${hexToRgb(star.color).b}, 0)`);
+			gradient.addColorStop(1, `transparent`);
             ctx.fillStyle = gradient;
             ctx.beginPath();
             ctx.arc(star.x, star.y, glowRadius, 0, Math.PI * 2);
@@ -463,7 +464,7 @@ window.addEventListener("DOMContentLoaded", function () {
     let lastFrameTime = 0;
     let slowFrameCount = 0;
     let adaptiveRendering = false;
-    const minFrameInterval = 1000 / 30;
+    const minFrameInterval = 1000 / 12;
     let frameSkipCounter = 0;
     const skipFrameThreshold = 3;
     let animationFrameId;
