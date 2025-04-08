@@ -6,11 +6,12 @@ window.addEventListener("DOMContentLoaded", function () {
 	const ctx = canvas.getContext('2d');
 
 	const baseWidth = 1920;
-	const baseHeight = 1200;
-	const baseGalaxySize = 500;
+	const baseHeight = 1080;
 
-	const minSizeFactor = 0.02;
-	const maxSizeFactor = 0.08;
+	// Galaxy Size
+	const baseGalaxySize = 500;
+	const galaxyMinSize = 0.02;
+	const galaxyMaxSize = 0.08;
 
 	const chromaticAberration = {
 		enabled: true,
@@ -34,9 +35,11 @@ window.addEventListener("DOMContentLoaded", function () {
 		galaxyMTypeColors
 	);
 
+	// Galaxies Array
 	const galaxies = [];
 
-	function getGalaxyCountByResolution() {
+	// Calculates the number of galaxies to display based on window size.
+	function getGalaxyCount() {
 		const width = window.innerWidth;
 		const height = window.innerHeight;
 		const isMobile = width < 768;
@@ -60,7 +63,7 @@ window.addEventListener("DOMContentLoaded", function () {
 			case (isMobile && height >= 2160): count = 8; break;
 			case (isMobile && height >= 1600): count = 6; break;
 			case (isMobile && height >= 1440): count = 5; break;
-			case (isMobile && height >= 1080): count = 5; break;
+			case (isMobile && height >= 1080): count = 5; break; 
 			case (isMobile && height >= 900): count = 4; break;
 			case (isMobile && height >= 720): count = 4; break;
 			case (isMobile && height >= 480): count = 3; break;
@@ -70,7 +73,8 @@ window.addEventListener("DOMContentLoaded", function () {
 
 		return count;
 	}
-
+	
+	// Galaxy
 	class Galaxy {
 		constructor(centerX, centerY, sizeFactor, numArms, viewAngleX, viewAngleY, galaxyColor, typeData) {
 			this.centerX = centerX;
@@ -83,6 +87,7 @@ window.addEventListener("DOMContentLoaded", function () {
 			this.typeData = typeData;
 		}
 
+		// Draws the galaxy on the canvas
 		draw(ctx, scaleX, scaleY) {
 			const {
 				centerX,
@@ -107,7 +112,7 @@ window.addEventListener("DOMContentLoaded", function () {
 
 			const scaledCenterX = centerX * scaleX;
 			const scaledCenterY = centerY * scaleY;
-			const sizeRatio = sizeFactor / maxSizeFactor;
+			const sizeRatio = sizeFactor / galaxyMaxSize;
 			const numPoints = Math.floor(baseNumPoints * sizeRatio);
 			const cosX = Math.cos(viewAngleX);
 			const sinX = Math.sin(viewAngleX);
@@ -265,8 +270,9 @@ window.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 
+	// Initializes the galaxies array with Galaxy objects
 	function initializeGalaxies() {
-		const galaxyCount = getGalaxyCountByResolution();
+		const galaxyCount = getGalaxyCount();
 		galaxies.length = 0;
 		const gridCols = 5;
 		const gridRows = 5;
@@ -297,7 +303,7 @@ window.addEventListener("DOMContentLoaded", function () {
 			const jitterY = (Math.random() * 0.6 + 0.2) * cellHeight;
 			const centerX = col * cellWidth + jitterX;
 			const centerY = row * cellHeight + jitterY;
-			const sizeFactor = minSizeFactor + Math.random() * (maxSizeFactor - minSizeFactor);
+			const sizeFactor = galaxyMinSize + Math.random() * (galaxyMaxSize - galaxyMinSize);
 			const numArms = Math.floor(Math.random() * 2) + 2;
 			const viewAngleX = Math.random() * Math.PI * 2;
 			const viewAngleY = Math.random() * Math.PI - Math.PI / 2;
@@ -313,6 +319,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		}
 	}
 
+	// Draws a single star on the canvas
 	function drawStar(ctx, x, y, size, color, opacity) {
 		ctx.beginPath();
 		ctx.arc(x, y, size, 0, 2 * Math.PI);
@@ -322,6 +329,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		ctx.globalAlpha = 1;
 	}
 
+	// Converts a hex color string to RGB
 	function hexToRgb(hex) {
 		const r = parseInt(hex.slice(1, 3), 16);
 		const g = parseInt(hex.slice(3, 5), 16);
@@ -329,10 +337,12 @@ window.addEventListener("DOMContentLoaded", function () {
 		return [r, g, b];
 	}
 
+	// Converts RGB values to a hex color string
 	function rgbToHex(r, g, b) {
 		return `#${(r < 16 ? '0' : '') + r.toString(16)}${(g < 16 ? '0' : '') + g.toString(16)}${(b < 16 ? '0' : '') + b.toString(16)}`;
 	}
 
+	// Gets a random shade of a base color based on distance from the galaxy core
 	function getRandomShade(baseHexColor, radius, coreRadius, endRadius) {
 		const [rBase, gBase, bBase] = hexToRgb(baseHexColor);
 		if (radius < coreRadius * 0.7)
@@ -366,20 +376,22 @@ window.addEventListener("DOMContentLoaded", function () {
 		return rgbToHex(Math.min(255, Math.max(0, r)), Math.min(255, Math.max(0, g)), Math.min(255, Math.max(0, b)));
 	}
 
+	// Resizes the canvas and redraws galaxies
 	function resizeCanvas() {
 		canvas.width = window.innerWidth;
 		canvas.height = window.innerHeight;
 		initializeGalaxies();
-		drawGalaxies(); // Call drawGalaxies here, after galaxies are initialized.
+		drawGalaxies();
 		const isMobile = window.innerWidth < 768;
 		if (chromaticAberration.enabled && !isMobile)
 			applyChromaticAberration();
 		auraEffect(); // First Aura Effect
 		if (!isMobile)
-			auraEffect(); // Second Aura Effect
+			auraEffect(); // Second Aura Effect if Desktop only
 		blurCanvasContent();
 	}
 
+	// Applies chromatic aberration effect
 	function applyChromaticAberration() {
 		const tempCanvas = document.createElement('canvas');
 		tempCanvas.width = canvas.width;
@@ -420,6 +432,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		ctx.drawImage(tempCanvas, 0, 0);
 	}
 
+	// Applies an aura effect to the galaxies
 	function auraEffect() {
 		const tempCanvas = document.createElement('canvas');
 		tempCanvas.width = canvas.width;
@@ -437,9 +450,10 @@ window.addEventListener("DOMContentLoaded", function () {
 			galaxy.draw(ctx, scaleX, scaleY);
 	}
 
+	// Applies a blur effect to the entire canvas
 	function blurCanvasContent() {
 		const width = canvas.width;
-		const height = canvas.height;
+		const height= canvas.height;
 		const imageData = ctx.getImageData(0, 0, width, height);
 		const data = imageData.data;
 		const blurredData = applySeparableGaussianBlur(data, width, height, 2);
@@ -447,11 +461,12 @@ window.addEventListener("DOMContentLoaded", function () {
 		ctx.putImageData(imageData, 0, 0);
 	}
 
+	// Applies separable Gaussian blur to the image data
 	function applySeparableGaussianBlur(data, width, height, radius) {
 		const kernel = createGaussianKernel(radius);
 		const kernelLength = radius * 2 + 1;
 		const horizontalBlurred = new Uint8ClampedArray(data);
-		for (let y =0; y < height; y++) {
+		for (let y = 0; y < height; y++) {
 			for (let x = 0; x < width; x++) {
 				let r = 0,
 					g = 0,
@@ -503,6 +518,7 @@ window.addEventListener("DOMContentLoaded", function () {
 		return finalBlurred;
 	}
 
+	// Creates a Gaussian kernel for the blur effect
 	function createGaussianKernel(radius) {
 		const size = radius * 2 + 1;
 		const sigma = radius / 3;
@@ -518,14 +534,16 @@ window.addEventListener("DOMContentLoaded", function () {
 		return kernel;
 	}
 
+	// Draws all galaxies on the canvas
 	function drawGalaxies() {
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 		const scaleX = canvas.width / baseWidth;
-		const scaleY = canvas.height / baseHeight;
+		const scaleY = canvas.height / baseHeight; 
 		for (let i = 0; i < galaxies.length; i++)
 			galaxies[i].draw(ctx, scaleX, scaleY);
 	}
 
+	// Initializes the canvas and galaxies
 	function initialize() {
 		resizeCanvas();
 	}
