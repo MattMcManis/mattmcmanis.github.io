@@ -120,17 +120,23 @@ canvas {
 
 #cursorCanvas {
     z-index: 99;
+	background: transparent;
 }
 
 #starsCanvas {
-    z-index: 1;
-    /*pointer-events: none;*/
+    z-index: 3;
+	background: transparent;
 }
 
-/*#galaxiesCanvas {
-	opacity: 0.9;
-	filter: blur(0.5px);
-}*/
+#galaxiesCanvas {
+	z-index: 2;
+	background: transparent;
+}
+
+#nebulaCanvas {
+	z-index: 1;
+	background: transparent;
+}
 
 #layout-content {
     position: relative;
