@@ -1,3 +1,6 @@
+/*
+ * Copyright © 2025 Matt McManis
+ */
 window.addEventListener("DOMContentLoaded", function () {
   const canvas = document.getElementById('galaxiesCanvas');
   const ctx = canvas.getContext('2d');
@@ -41,12 +44,12 @@ window.addEventListener("DOMContentLoaded", function () {
   ];
 
   const galaxies = []; // Declare galaxies array
-  
+
   function getGalaxyCountByResolution() {
     const screenHeight = window.screen.height;
     const screenWidth = window.screen.width;
     const isMobile = screenWidth < 768;
-    
+
     if (!isMobile) {
       if (screenHeight >= 7680) return 28;
       if (screenHeight >= 2880) return 20;
@@ -92,7 +95,7 @@ window.addEventListener("DOMContentLoaded", function () {
       const {
         centerX, centerY, sizeFactor, numArms, viewAngleX, viewAngleY, galaxyColor, typeData
       } = this;
-      
+
       const {
         baseNumPoints, tightness, startRadius, endRadius, armWidth,
         interArmDensity, coreDensity, coreRadius
@@ -108,39 +111,45 @@ window.addEventListener("DOMContentLoaded", function () {
       const cosY = Math.cos(viewAngleY);
       const sinY = Math.sin(viewAngleY);
 
+      // Pre-calculate random special colors for faster access
+      const specialColors = ['#FFFFFF', '#C8C8FF', '#FFF0C8'];
+
       // Draw spiral arms
       for (let i = 0; i < numPoints; i++) {
         const t = i / (numPoints - 1);
         const radius = startRadius + t * (endRadius - startRadius);
+
+        // Pre-calculate jitter factor for arm width
+        const armJitter = armWidth * radius;
+
         for (let arm = 0; arm < numArms; arm++) {
           const angleOffset = (arm / numArms) * 2 * Math.PI;
           const angle = t * 10 * Math.PI * tightness + angleOffset;
-          const jitterX = (Math.random() - 0.5) * armWidth * radius;
-          const jitterY = (Math.random() - 0.5) * armWidth * radius;
+          const jitterX = (Math.random() - 0.5) * armJitter;
+          const jitterY = (Math.random() - 0.5) * armJitter;
+
           let x = scaledCenterX + radius * Math.cos(angle) + jitterX;
           let y = scaledCenterY + radius * Math.sin(angle) + jitterY;
           let z = 0;
 
-          // 3D rotation
-          const rotatedX = (x - scaledCenterX) * cosX - z * sinX + scaledCenterX;
-          const rotatedZ = (x - scaledCenterX) * sinX + z * cosX;
+          // 3D rotation (combined for X and Y axis)
+          let rotatedX = (x - scaledCenterX) * cosX - z * sinX + scaledCenterX;
+          let rotatedZ = (x - scaledCenterX) * sinX + z * cosX;
           x = rotatedX;
           z = rotatedZ;
 
-          const rotatedY = (y - scaledCenterY) * cosY - z * sinY + scaledCenterY;
-          const rotatedZ2 = (y - scaledCenterY) * sinY + z * cosY;
+          let rotatedY = (y - scaledCenterY) * cosY - z * sinY + scaledCenterY;
+          z = (y - scaledCenterY) * sinY + z * cosY;
           y = rotatedY;
-          z = rotatedZ2;
 
           const size = (Math.random() * 0.525 + 0.1) * sizeFactor;
-          const color = getRandomShade(galaxyColor, radius, coreRadius, endRadius);
-          let finalColor = color;
+          let finalColor = getRandomShade(galaxyColor, radius, coreRadius, endRadius);
 
           if (Math.random() < 0.008) {
-            const specialColors = ['#FFFFFF', '#C8C8FF', '#FFF0C8'];
             finalColor = specialColors[Math.floor(Math.random() * specialColors.length)];
           }
-          const edgeFactor = Math.abs(jitterX) / (armWidth * radius);
+
+          const edgeFactor = Math.abs(jitterX) / armJitter;
           const opacity = Math.max(0.1, 1 - edgeFactor * 1.5);
           drawStar(ctx, x, y, size, finalColor, opacity);
         }
@@ -155,16 +164,15 @@ window.addEventListener("DOMContentLoaded", function () {
         let y = scaledCenterY + radius * Math.sin(angle);
         let z = 0;
 
-        // 3D rotation
-        const rotatedX = (x - scaledCenterX) * cosX - z * sinX + scaledCenterX;
-        const rotatedZ = (x - scaledCenterX) * sinX + z * cosX;
+        // 3D rotation (combined for X and Y axis)
+        let rotatedX = (x - scaledCenterX) * cosX - z * sinX + scaledCenterX;
+        let rotatedZ = (x - scaledCenterX) * sinX + z * cosX;
         x = rotatedX;
         z = rotatedZ;
 
-        const rotatedY = (y - scaledCenterY) * cosY - z * sinY + scaledCenterY;
-        const rotatedZ2 = (y - scaledCenterY) * sinY + z * cosY;
+        let rotatedY = (y - scaledCenterY) * cosY - z * sinY + scaledCenterY;
+        z = (y - scaledCenterY) * sinY + z * cosY;
         y = rotatedY;
-        z = rotatedZ2;
 
         const size = (Math.random() * 0.25 + 0.05) * sizeFactor;
         const opacity = Math.random() * 0.6 + 0.4;
@@ -181,19 +189,19 @@ window.addEventListener("DOMContentLoaded", function () {
         let y = scaledCenterY + radius * Math.sin(angle);
         let z = 0;
 
-        // 3D rotation
-        const rotatedX = (x - scaledCenterX) * cosX - z * sinX + scaledCenterX;
-        const rotatedZ = (x - scaledCenterX) * sinX + z * cosX;
+        // 3D rotation (combined for X and Y axis)
+        let rotatedX = (x - scaledCenterX) * cosX - z * sinX + scaledCenterX;
+        let rotatedZ = (x - scaledCenterX) * sinX + z * cosX;
         x = rotatedX;
         z = rotatedZ;
 
-        const rotatedY = (y - scaledCenterY) * cosY - z * sinY + scaledCenterY;
-        const rotatedZ2 = (y - scaledCenterY) * sinY + z * cosY;
+        let rotatedY = (y - scaledCenterY) * cosY - z * sinY + scaledCenterY;
+        z = (y - scaledCenterY) * sinY + z * cosY;
         y = rotatedY;
-        z = rotatedZ2;
 
         const size = (Math.random() * 0.6 + 0.15) * (1 - radius / coreRadius) * sizeFactor;
         let color;
+
         if (radius < coreRadius * 0.7) {
           color = '#FFFFFF';
         } else {
@@ -204,6 +212,7 @@ window.addEventListener("DOMContentLoaded", function () {
           const b = 255 - Math.floor(factor * (255 - baseColor.b) * 0.2);
           color = `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
         }
+
         const opacity = Math.random() * 0.4 + 0.6;
         drawStar(ctx, x, y, size, color, opacity);
       }
@@ -225,7 +234,7 @@ window.addEventListener("DOMContentLoaded", function () {
       super(centerX, centerY, sizeFactor, numArms, viewAngleX, viewAngleY, galaxyColor, typeData);
     }
   }
-  
+
   class SpiralAlternateGalaxy extends Galaxy {
     constructor(centerX, centerY, sizeFactor, numArms, viewAngleX, viewAngleY, galaxyColor) {
       const typeData = {
@@ -292,27 +301,44 @@ window.addEventListener("DOMContentLoaded", function () {
 
   function initializeGalaxies() {
     const GALAXY_COUNT = getGalaxyCountByResolution();
-    galaxies.length = 0;
+    galaxies.length = 0; // Clear the galaxies array
 
     const gridCols = 5;
     const gridRows = 5;
     const cellWidth = BASE_WIDTH / gridCols;
     const cellHeight = BASE_HEIGHT / gridRows;
 
+    // Precompute grid positions and shuffle them
     const gridPositions = [];
+    let index = 0;
     for (let row = 0; row < gridRows; row++) {
       for (let col = 0; col < gridCols; col++) {
-        gridPositions.push({ row, col });
+        gridPositions[index++] = { row, col };
       }
     }
 
+    // Efficient random shuffle (Fisher-Yates algorithm)
     for (let i = gridPositions.length - 1; i > 0; i--) {
       const j = Math.floor(Math.random() * (i + 1));
       [gridPositions[i], gridPositions[j]] = [gridPositions[j], gridPositions[i]];
     }
 
+    // Slice the shuffled positions to select only the needed ones
     const selectedPositions = gridPositions.slice(0, GALAXY_COUNT);
 
+    // Precompute random color arrays for each galaxy type
+    const galaxyTypeColors = [
+      { type: SpiralGalaxy, colors: [...galaxy_B_Type_Colors, ...galaxy_A_Type_Colors] },
+      { type: SpiralAlternateGalaxy, colors: [...galaxy_O_Type_Colors, ...galaxy_B_Type_Colors, ...galaxy_A_Type_Colors] },
+      { type: EllipticalGalaxy, colors: [...galaxy_G_Type_Colors, ...galaxy_K_Type_Colors, ...galaxy_M_Type_Colors] },
+      { type: IrregularGalaxy, colors: galaxyColors },
+      { type: RingGalaxy, colors: [...galaxy_O_Type_Colors, ...galaxy_B_Type_Colors] }
+    ];
+
+    // Precompute random values for galaxy creation
+    const randomValues = Array(GALAXY_COUNT).fill(0).map(() => Math.random());
+
+    // Generate galaxies
     for (let i = 0; i < GALAXY_COUNT; i++) {
       const { row, col } = selectedPositions[i];
       const jitterX = (Math.random() * 0.6 + 0.2) * cellWidth;
@@ -324,25 +350,24 @@ window.addEventListener("DOMContentLoaded", function () {
       const viewAngleX = Math.random() * Math.PI * 2;
       const viewAngleY = Math.random() * Math.PI - Math.PI / 2;
 
-      const rand = Math.random();
-      let galaxyType;
-      let colorArray;
+      const rand = randomValues[i];
+      let galaxyType, colorArray;
 
       if (rand < 0.6) {
-        galaxyType = SpiralGalaxy;
-        colorArray = [...galaxy_B_Type_Colors, ...galaxy_A_Type_Colors];
+        galaxyType = galaxyTypeColors[0].type;
+        colorArray = galaxyTypeColors[0].colors;
       } else if (rand < 0.8) {
-        galaxyType = SpiralAlternateGalaxy;
-        colorArray = [...galaxy_O_Type_Colors, ...galaxy_B_Type_Colors, ...galaxy_A_Type_Colors];
+        galaxyType = galaxyTypeColors[1].type;
+        colorArray = galaxyTypeColors[1].colors;
       } else if (rand < 0.9) {
-        galaxyType = EllipticalGalaxy;
-        colorArray = [...galaxy_G_Type_Colors, ...galaxy_K_Type_Colors, ...galaxy_M_Type_Colors];
+        galaxyType = galaxyTypeColors[2].type;
+        colorArray = galaxyTypeColors[2].colors;
       } else if (rand < 0.98) {
-        galaxyType = IrregularGalaxy;
-        colorArray = galaxyColors;
+        galaxyType = galaxyTypeColors[3].type;
+        colorArray = galaxyTypeColors[3].colors;
       } else {
-        galaxyType = RingGalaxy;
-        colorArray = [...galaxy_O_Type_Colors, ...galaxy_B_Type_Colors];
+        galaxyType = galaxyTypeColors[4].type;
+        colorArray = galaxyTypeColors[4].colors;
       }
 
       const galaxyColor = colorArray[Math.floor(Math.random() * colorArray.length)];
@@ -363,57 +388,61 @@ window.addEventListener("DOMContentLoaded", function () {
     const r = parseInt(hex.slice(1, 3), 16);
     const g = parseInt(hex.slice(3, 5), 16);
     const b = parseInt(hex.slice(5, 7), 16);
-    return { r, g, b };
+    return [r, g, b];  // Return as an array for faster access
+  }
+
+  function rgbToHex(r, g, b) {
+    return `#${(r < 16 ? '0' : '') + r.toString(16)}${(g < 16 ? '0' : '') + g.toString(16)}${(b < 16 ? '0' : '') + b.toString(16)}`;
   }
 
   function getRandomShade(baseHexColor, radius, coreRadius, endRadius) {
-    const transitionZone = coreRadius * 2.5;
+    const [rBase, gBase, bBase] = hexToRgb(baseHexColor); // Extract base RGB values once
 
     if (radius < coreRadius * 0.7) {
       return '#FFFFFF';
-    } else if (radius < coreRadius) {
+    }
+
+    const transitionZone = coreRadius * 2.5;
+    let r, g, b;
+
+    if (radius < coreRadius) {
       const factor = (radius - coreRadius * 0.7) / (coreRadius * 0.3);
-      const baseColor = hexToRgb(baseHexColor);
-      const r = 255 - Math.floor(factor * (255 - baseColor.r) * 0.2);
-      const g = 255 - Math.floor(factor * (255 - baseColor.g) * 0.2);
-      const b = 255 - Math.floor(factor * (255 - baseColor.b) * 0.2);
-      return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
-    } else if (radius < transitionZone) {
+      r = 255 - Math.floor(factor * (255 - rBase) * 0.2);
+      g = 255 - Math.floor(factor * (255 - gBase) * 0.2);
+      b = 255 - Math.floor(factor * (255 - bBase) * 0.2);
+      return rgbToHex(r, g, b);
+    }
+
+    if (radius < transitionZone) {
       const transitionFactor = (radius - coreRadius) / (transitionZone - coreRadius);
-      const baseColor = hexToRgb(baseHexColor);
-      const r = Math.floor(255 - (transitionFactor * transitionFactor * (255 - baseColor.r)));
-      const g = Math.floor(255 - (transitionFactor * transitionFactor * (255 - baseColor.g)));
-      const b = Math.floor(255 - (transitionFactor * transitionFactor * (255 - baseColor.b)));
+      r = Math.floor(255 - (transitionFactor * transitionFactor * (255 - rBase)));
+      g = Math.floor(255 - (transitionFactor * transitionFactor * (255 - gBase)));
+      b = Math.floor(255 - (transitionFactor * transitionFactor * (255 - bBase)));
+
       const variance = 15;
-      const vR = Math.floor(Math.random() * variance - variance / 2);
-      const vG = Math.floor(Math.random() * variance - variance / 2);
-      const vB = Math.floor(Math.random() * variance - variance / 2);
-      const finalR = Math.min(255, Math.max(0, r + vR));
-      const finalG = Math.min(255, Math.max(0, g + vG));
-      const finalB = Math.min(255, Math.max(0, b + vB));
-      return `#${finalR.toString(16).padStart(2, '0')}${finalG.toString(16).padStart(2, '0')}${finalB.toString(16).padStart(2, '0')}`;
+      r = Math.min(255, Math.max(0, r + Math.floor(Math.random() * variance - variance / 2)));
+      g = Math.min(255, Math.max(0, g + Math.floor(Math.random() * variance - variance / 2)));
+      b = Math.min(255, Math.max(0, b + Math.floor(Math.random() * variance - variance / 2)));
+      return rgbToHex(r, g, b);
     }
 
     const distanceFactor = radius / endRadius;
-    const baseColor = hexToRgb(baseHexColor);
     const brightnessFactor = 1 - distanceFactor * 0.7;
-    const varianceFactor = 0.5;
-    const randomFactor = 1 - varianceFactor / 2 + Math.random() * varianceFactor;
-    let r = Math.floor(baseColor.r * brightnessFactor * randomFactor);
-    let g = Math.floor(baseColor.g * brightnessFactor * randomFactor);
-    let b = Math.floor(baseColor.b * brightnessFactor * randomFactor);
-    r = Math.min(255, Math.max(0, r));
-    g = Math.min(255, Math.max(0, g));
-    b = Math.min(255, Math.max(0, b));
-    return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+    const randomFactor = 1 - 0.25 + Math.random() * 0.5; // varianceFactor optimized
+
+    r = Math.floor(rBase * brightnessFactor * randomFactor);
+    g = Math.floor(gBase * brightnessFactor * randomFactor);
+    b = Math.floor(bBase * brightnessFactor * randomFactor);
+
+    return rgbToHex(Math.min(255, Math.max(0, r)), Math.min(255, Math.max(0, g)), Math.min(255, Math.max(0, b)));
   }
 
   function resizeCanvas() {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    
+
     initializeGalaxies();
-    
+
     drawGalaxies();
     if (chromaticAberration.enabled) {
       applyChromaticAberration();
@@ -429,57 +458,59 @@ window.addEventListener("DOMContentLoaded", function () {
     tempCanvas.width = canvas.width;
     tempCanvas.height = canvas.height;
     const tempCtx = tempCanvas.getContext('2d');
-    
+
     // Get the original image data
     tempCtx.drawImage(canvas, 0, 0);
     const imageData = tempCtx.getImageData(0, 0, canvas.width, canvas.height);
     const data = imageData.data;
-    
+
     // Create a single canvas for the combined effect
     const outputCanvas = document.createElement('canvas');
     outputCanvas.width = canvas.width;
     outputCanvas.height = canvas.height;
     const outputCtx = outputCanvas.getContext('2d');
-    
+
     // Clear the main canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
-    
-    // Apply red channel offset
-    outputCtx.clearRect(0, 0, canvas.width, canvas.height);
-    const redData = new ImageData(new Uint8ClampedArray(data.length), canvas.width, canvas.height);
+
+    // Allocate arrays for red, green, blue channels
+    const redData = new Uint8ClampedArray(data.length);
+    const greenData = new Uint8ClampedArray(data.length);
+    const blueData = new Uint8ClampedArray(data.length);
+
+    // Populate the red, green, blue channel data
     for (let i = 0; i < data.length; i += 4) {
-      redData.data[i] = data[i];       // Red channel
-      redData.data[i + 3] = data[i + 3]; // Alpha
+      redData[i] = data[i];         // Red channel
+      redData[i + 3] = data[i + 3]; // Alpha
+
+      greenData[i + 1] = data[i + 1]; // Green channel
+      greenData[i + 3] = data[i + 3]; // Alpha
+
+      blueData[i + 2] = data[i + 2]; // Blue channel
+      blueData[i + 3] = data[i + 3]; // Alpha
     }
-    outputCtx.putImageData(redData, 0, 0);
+
+    // Apply red channel offset
+    const redImageData = new ImageData(redData, canvas.width, canvas.height);
+    outputCtx.putImageData(redImageData, 0, 0);
     ctx.globalCompositeOperation = 'screen';
     ctx.globalAlpha = chromaticAberration.opacity;
     ctx.drawImage(outputCanvas, chromaticAberration.offsetRed, 0);
-    
+
     // Apply green channel offset
-    outputCtx.clearRect(0, 0, canvas.width, canvas.height);
-    const greenData = new ImageData(new Uint8ClampedArray(data.length), canvas.width, canvas.height);
-    for (let i = 0; i < data.length; i += 4) {
-      greenData.data[i + 1] = data[i + 1]; // Green channel
-      greenData.data[i + 3] = data[i + 3]; // Alpha
-    }
-    outputCtx.putImageData(greenData, 0, 0);
+    const greenImageData = new ImageData(greenData, canvas.width, canvas.height);
+    outputCtx.putImageData(greenImageData, 0, 0);
     ctx.drawImage(outputCanvas, chromaticAberration.offsetGreen, 0);
-    
+
     // Apply blue channel offset
-    outputCtx.clearRect(0, 0, canvas.width, canvas.height);
-    const blueData = new ImageData(new Uint8ClampedArray(data.length), canvas.width, canvas.height);
-    for (let i = 0; i < data.length; i += 4) {
-      blueData.data[i + 2] = data[i + 2]; // Blue channel
-      blueData.data[i + 3] = data[i + 3]; // Alpha
-    }
-    outputCtx.putImageData(blueData, 0, 0);
+    const blueImageData = new ImageData(blueData, canvas.width, canvas.height);
+    outputCtx.putImageData(blueImageData, 0, 0);
     ctx.drawImage(outputCanvas, chromaticAberration.offsetBlue, 0);
-    
+
     // Reset composite operation and alpha
     ctx.globalCompositeOperation = 'source-over';
     ctx.globalAlpha = 1.0;
-    
+
     // Draw original image with normal opacity to combine
     ctx.drawImage(tempCanvas, 0, 0);
   }
@@ -508,16 +539,22 @@ window.addEventListener("DOMContentLoaded", function () {
     const height = canvas.height;
     const imageData = ctx.getImageData(0, 0, width, height);
     const data = imageData.data;
+
+    // Apply the separable Gaussian blur directly to the image data
     const blurredData = applySeparableGaussianBlur(data, width, height, 2);
+
+    // Set the blurred data back to the canvas
     imageData.data.set(blurredData);
     ctx.putImageData(imageData, 0, 0);
   }
 
   function applySeparableGaussianBlur(data, width, height, radius) {
     const kernel = createGaussianKernel(radius);
+    const kernelLength = radius * 2 + 1;
+
     const horizontalBlurred = new Uint8ClampedArray(data);
 
-    // Horizontal pass
+    // Horizontal pass (apply the kernel horizontally)
     for (let y = 0; y < height; y++) {
       for (let x = 0; x < width; x++) {
         let r = 0, g = 0, b = 0, a = 0;
@@ -540,8 +577,9 @@ window.addEventListener("DOMContentLoaded", function () {
       }
     }
 
-    // Vertical pass
-    const finalBlurred = new Uint8ClampedArray(horizontalBlurred);
+    // Vertical pass (apply the kernel vertically)
+    const finalBlurred = new Uint8ClampedArray(data);
+
     for (let x = 0; x < width; x++) {
       for (let y = 0; y < height; y++) {
         let r = 0, g = 0, b = 0, a = 0;
@@ -563,6 +601,7 @@ window.addEventListener("DOMContentLoaded", function () {
         finalBlurred[idx + 3] = a;
       }
     }
+
     return finalBlurred;
   }
 
@@ -571,33 +610,42 @@ window.addEventListener("DOMContentLoaded", function () {
     const sigma = radius / 3;
     const kernel = new Array(size);
     let sum = 0;
-    
+
+    // Calculate the Gaussian kernel
     for (let i = -radius; i <= radius; i++) {
-      kernel[i + radius] = Math.exp(-(i * i) / (2 * sigma * sigma));
-      sum += kernel[i + radius];
+      const value = Math.exp(-(i * i) / (2 * sigma * sigma));
+      kernel[i + radius] = value;
+      sum += value;
     }
-    
+
+    // Normalize the kernel
     for (let i = 0; i < size; i++) {
       kernel[i] /= sum;
     }
-    
+
     return kernel;
   }
 
   function drawGalaxies() {
+    // Clear the entire canvas before drawing
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // Pre-calculate scale values outside the loop to avoid repeated computation
     const scaleX = canvas.width / BASE_WIDTH;
     const scaleY = canvas.height / BASE_HEIGHT;
-    
-    for (const galaxy of galaxies) {
-      galaxy.draw(ctx, scaleX, scaleY);
+
+    // Use a simple for loop for iterating over galaxies for better performance (vs for..of)
+    const galaxiesLength = galaxies.length;  // Cache the length for better loop performance
+    for (let i = 0; i < galaxiesLength; i++) {
+      // Draw each galaxy using the pre-calculated scaling factors
+      galaxies[i].draw(ctx, scaleX, scaleY);
     }
   }
 
   function initialize() {
     resizeCanvas();
   }
-  
+
   initialize();
   window.addEventListener('resize', resizeCanvas);
 });

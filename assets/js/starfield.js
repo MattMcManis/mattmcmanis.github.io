@@ -1,648 +1,551 @@
+/*
+ * Copyright © 2025 Matt McManis
+ */
 window.addEventListener("DOMContentLoaded", function () {
-    // Configuration parameters
-    const CONFIG = {
-        numLargeStars: 140, // 140
-        numMediumStars: 340, // 340
-        numSmallStars: 2800, // 2800
-        numTinyStars: 8000, //10000
-        // Brightness controls (0-100)
-        brightness: {
-            large: 65,
-            medium: 45,
-            small: 35,
-            tiny: 20
-        },
-        starburst: {
-            angle: 0, // Starburst angle in degrees
-        },
-		
-        // Color distribution
-        starColorDistribution: {
-            // O-type stars (Blue-Violet)
-            '#adb2ff': 1,
-            // B-type stars (Blue)
-			'#4f86f6': 1, '#5aadf2': 2,
-            // A-type stars (Blue-White)
-			'#91c2ff': 3, '#cef3ff': 10,
-            // F-type stars (White)
-			'#ffffff': 70, '#ffffe3': 10,
-            // G-type stars (Yellow)
-            '#fcfc8f': 1, '#fef3b9': 1, 
-            // K-type stars (Orange)
-            '#fb9964': 1, '#fdbaa2': 1,
-            // M-type stars (Red)
-			'#f37477': 1, '#f9bdcd': 1
-        },
-        // Extended colors for large stars
-        extendedStarColorDistribution: {
-			// O-type stars (Blue-Violet)
-            '#7b96ff': 1, // Blue-violet
-			// B-type stars (Blue)
-            '#3480ff': 8, // Bright Blue
-			// A-type stars (Blue-White)
-            '#76cffa': 1, // Light Sky Blue
-			// F-type stars (Yellow-White)
-			'#ffffff': 8, // Pure white
-            '#ffe687': 3, // Bright yellow
-			// K-type stars (Orange)
-            '#ffab1a': 1, // Deep orange
-            '#ff7f10': 1, // Red-orange (Betelgeuse, Antares)
-			// M-type stars (Red)
-            '#ff5b5b': 2, // Light Red
-			// Unique
-            '#3ffab2': 1, // Medium Spring Green
-            '#48D1CC': 1, // Medium Turquoise
-            '#20B2AA': 1  // Light Sea Green
-        },
-        // Chromatic Aberration
-        chromaticAberration: {
-            enabled: true,
-            opacity: 0.25, // Overall opacity of the effect
-            // Parameters per star size
-            large: {
-                intensity: 0.15, // 0-1 range
-                offsetRed: 2.0,
-                offsetGreen: 0.0,
-                offsetBlue: -2.0,
-            },
-            medium: {
-                intensity: 0.10,
-                offsetRed: 1.5,
-                offsetGreen: 0.0,
-                offsetBlue: -1.5,
-            },
-            small: {
-                intensity: 0,
-                offsetRed: 0,
-                offsetGreen: 0,
-                offsetBlue: 0,
-            },
-            tiny: {
-                intensity: 0,
-                offsetRed: 0,
-                offsetGreen: 0,
-                offsetBlue: 0,
-            }
-        }
-    };
+  // Configurable Parameters
+  const params = {
+    referenceWidth: 1920,
+    referenceHeight: 1080,
+    starCounts: {
+      large: { count: 115, enabled: true },
+      medium: { count: 390, enabled: true },
+      small: { count: 2500, enabled: true },
+      tiny: { count: 6800, enabled: true },
+    },
+    starSizes: {
+      large: { min: 2.8, max: 3.5, enabled: true },
+      medium: { min: 1.6, max: 2.7, enabled: true },
+      small: { min: 0.8, max: 1.5, enabled: true },
+      tiny: { min: 0.3, max: 0.7, enabled: true },
+    },
+    brightness: {
+      large: { value: 1.0, enabled: true },
+      medium: { value: 1.0, enabled: true },
+      small: { value: 1.0, enabled: true },
+      tiny: { value: 1.0, enabled: true },
+    },
+    twinkle: {
+      large: { enabled: true, speed: 0.005, intensityRadius: 0.15, intensityOpacity: 0.1, percentage: 0.3 }, // 0.5 = 50% twinkle
+      medium: { enabled: true, speed: 0.005, intensityRadius: 0.25, intensityOpacity: 0.5, percentage: 0.4 },
+      small: { enabled: true, speed: 0.005, intensityRadius: 0.10, intensityOpacity: 0.3, percentage: 0.5 },
+      tiny: { enabled: true, speed: 0.005, intensityRadius: 0.005, intensityOpacity: 0.4, percentage: 0.6 },
+    },
+    starburst: {
+      allSizes: {
+        enabled: true,
+        rayCount: 4,
+        rayLengthFactor: 12,
+        angle: 0,
+        opacity: 0.8,
+        minRayFactor: 0.80,
+      },
+      large: { enabled: true, animate: true, animationSpeed: 7 },
+      medium: { enabled: true, animate: true, animationSpeed: 7 },
+      small: { enabled: false, animate: true, animationSpeed: 0 },
+      tiny: { enabled: false, animate: true, animationSpeed: 0 },
+    },
+    glow: {
+      large: { enabled: true, sizeFactor: 5.25, opacity: 0.35 },
+      medium: { enabled: true, sizeFactor: 3.75, opacity: 0.3 },
+      small: { enabled: false, sizeFactor: 2.75, opacity: 0.2 },
+      tiny: { enabled: false, sizeFactor: 1.75, opacity: 0.1 },
+    },
+    blur: {
+      large: { amount: 0, enabled: false },
+      medium: { amount: 0, enabled: false },
+      small: { amount: 0.1, enabled: true },
+      tiny: { amount: 0.1, enabled: false },
+    },
+    distribution: 0.0,
+    basicColors: {
+      '#adb2ff': 1, // O-type (Blue-Violet)
+      '#4f86f6': 1,
+      '#5aadf2': 2, // B-type (Blue)
+      '#91c2ff': 3,
+      '#cef3ff': 10, // A-type (Blue-White)
+      '#ffffff': 10,
+      '#ffffe3': 0, // F-type (White)
+      '#fcfc8f': 1,
+      '#fef3b9': 1, // G-type (Yellow)
+      '#fb9964': 1,
+      '#fdbaa2': 1, // K-type (Orange)
+      '#f37477': 1,
+      '#f9bdcd': 1, // M-type (Red)
+    },
+    mediumStarColors: {
+      '#7b96ff': 1, // Blue-violet
+      '#3480ff': 8, // Bright Blue
+      '#76cffa': 1, // Light Sky Blue
+      '#ffe687': 3, // Bright yellow
+      '#ffab1a': 1, // Deep orange
+      '#ff7f10': 1, // Red-orange
+      '#ff5b5b': 3, // Light Red
+      '#3ffab2': 1, // Medium Spring Green
+      '#48D1CC': 1, // Medium Turquoise
+      '#20B2AA': 1, // Light Sea Green
+    },
+    largeStarColors: {
+      '#7b96ff': 1, // Blue-violet
+      '#3480ff': 8, // Bright Blue
+      '#76cffa': 1, // Light Sky Blue
+      '#ffe687': 3, // Bright yellow
+      '#ffab1a': 1, // Deep orange
+      '#ff7f10': 1, // Red-orange
+      '#ff5b5b': 3, // Light Red
+      '#3ffab2': 1, // Medium Spring Green
+      '#48D1CC': 1, // Medium Turquoise
+      '#20B2AA': 1, // Light Sea Green
+    },
+    useOffScreenCanvas: true,
+    globalFramerate: 20,
+  };
 
-    // Setup canvas
-    const mainCanvas = document.getElementById('starsCanvas');
-    const ctx = mainCanvas.getContext('2d', { alpha: true });
+  let canvas, ctx, offScreenCanvas, offScreenCtx;
+  let width, height;
+  let animationFrameId;
+  let lastFrameTime = 0;
+  let frameInterval = 1000 / params.globalFramerate;
+  let stars = {
+    large: [],
+    medium: [],
+    small: [],
+    tiny: [],
+  };
+  const starLayers = ['large', 'medium', 'small', 'tiny'];
+  // Pre-calculate and store animation data
+  let starAnimationData = {
+    large: [],
+    medium: [],
+    small: [],
+    tiny: [],
+  };
+  // Store last twinkle time for each star
+  let lastTwinkleTime = {
+    large: [],
+    medium: [],
+    small: [],
+    tiny: [],
+  };
+  // Store whether each star should twinkle or not
+  let starTwinkleStatus = {
+    large: [],
+    medium: [],
+    small: [],
+    tiny: [],
+  };
+  //Global variable for resize timeout
+  let resizeTimeout;
 
-    // Create offscreen canvas for static elements
-    let staticCanvas, staticCtx;
-    if (window.OffscreenCanvas) {
-        staticCanvas = new OffscreenCanvas(1, 1);
-        staticCtx = staticCanvas.getContext('2d', { alpha: true });
-    } else {
-        staticCanvas = document.createElement('canvas');
-        staticCtx = staticCanvas.getContext('2d');
-    }
-
-    // Canvas dimensions
-    let canvasWidth = window.innerWidth;
-    let canvasHeight = window.innerHeight;
-
-    // Update canvas dimensions
-    const updateCanvasDimensions = () => {
-        mainCanvas.width = canvasWidth;
-        mainCanvas.height = canvasHeight;
-        if (staticCanvas.width !== canvasWidth || staticCanvas.height !== canvasHeight) {
-            staticCanvas.width = canvasWidth;
-            staticCanvas.height = canvasHeight;
-        }
-    };
-    updateCanvasDimensions();
-
-    // Color utilities
-    const colorCache = new Map();
-    const hexToRgb = (() => {
-        const hexCache = new Map();
-        return (hex) => {
-            if (hexCache.has(hex)) return hexCache.get(hex);
-            const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-            const rgb = result ? {
-                r: parseInt(result[1], 16),
-                g: parseInt(result[2], 16),
-                b: parseInt(result[3], 16)
-            } : { r: 255, g: 255, b: 255 };
-            if (hexCache.size > 100) hexCache.clear();
-            hexCache.set(hex, rgb);
-            return rgb;
-        };
-    })();
-
-    const rgbToHex = (() => {
-        const componentToHex = (c) => {
-            const hex = c.toString(16);
-            return hex.length === 1 ? '0' + hex : hex;
-        };
-        return (r, g, b) => `#${componentToHex(r)}${componentToHex(g)}${componentToHex(b)}`;
-    })();
-
-    const shiftColorTowards = (color1, color2, amount) => {
-        const cacheKey = `${color1}|${color2}|${amount.toFixed(3)}`;
-        if (colorCache.has(cacheKey)) return colorCache.get(cacheKey);
-        const rgb1 = hexToRgb(color1);
-        const rgb2 = hexToRgb(color2);
-        const r = Math.round(rgb1.r + (rgb2.r - rgb1.r) * amount);
-        const g = Math.round(rgb1.g + (rgb2.g - rgb1.g) * amount);
-        const b = Math.round(rgb1.b + (rgb2.b - rgb1.b) * amount);
-        const result = rgbToHex(r, g, b);
-        if (colorCache.size > 500) colorCache.clear();
-        colorCache.set(cacheKey, result);
-        return result;
-    };
-
-    // Calculate brightness
-    const getBrightnessFactor = (value) => {
-        return (value / 50) * 2.0;
-    };
-
-    // Process color distributions
-    const createWeightedColorArray = (colorDistribution) => {
-        const colors = [], weights = [];
-        let totalWeight = 0;
-        for (const [color, weight] of Object.entries(colorDistribution)) {
-            if (weight <= 0) continue;
-            colors.push(color);
-            weights.push(weight);
-            totalWeight += weight;
-        }
-        const probabilities = weights.map(w => w / totalWeight);
-        const cumulativeProbabilities = [];
-        let sum = 0;
-        for (const p of probabilities) {
-            sum += p;
-            cumulativeProbabilities.push(sum);
-        }
-        return { colors, cumulativeProbabilities };
-    };
-
-    // Get weighted random color
-    const getRandomWeightedColor = (colorData) => {
-        const { colors, cumulativeProbabilities } = colorData;
-        const rand = Math.random();
-        let low = 0, high = cumulativeProbabilities.length - 1;
-        while (low <= high) {
-            const mid = Math.floor((low + high) / 2);
-            if (mid === 0 || (rand >= cumulativeProbabilities[mid - 1] && rand < cumulativeProbabilities[mid])) {
-                return colors[mid];
-            } else if (rand < cumulativeProbabilities[mid]) {
-                high = mid - 1;
-            } else {
-                low = mid + 1;
-            }
-        }
-        return colors[0];
-    };
-
-    // Pre-compute color distributions
-    const starColors = createWeightedColorArray(CONFIG.starColorDistribution);
-    const extendedStarColors = createWeightedColorArray({
-        ...CONFIG.starColorDistribution,
-        ...CONFIG.extendedStarColorDistribution
+  function init() {
+    canvas = document.getElementById('starsCanvas');
+    ctx = canvas.getContext('2d', {
+      willReadFrequently: false,
     });
+    resizeCanvas();
 
-    // Star class
-    class Star {
-        constructor(type = null) {
-            this.x = Math.random() * canvasWidth;
-            this.y = Math.random() * canvasHeight;
-            if (type) {
-                this.type = type;
-            } else {
-                const sizeRand = Math.random();
-                if (sizeRand > 0.995) this.type = "large";
-                else if (sizeRand > 0.97) this.type = "medium";
-                else if (sizeRand > 0.6) this.type = "small";
-                else this.type = "tiny";
-            }
-            this.initProperties();
-        }
-
-        initProperties() {
-            switch (this.type) {
-				case "large":
-					this.size = 3 + Math.random() * 2; // Size range: 3 to 5
-					this.hasStarburst = true;
-					this.color = getRandomWeightedColor(extendedStarColors);
-					this.twinkleAmount = 0.025 + Math.random() * 0.05;
-					break;
-				case "medium":
-					// Size range: closer to large, with some overlap
-					this.size = 1.6 + Math.random() * 1.4; // Size range: 1.6 to 3
-					this.hasStarburst = Math.random() > 0.3;
-					this.color = getRandomWeightedColor(extendedStarColors);
-					this.twinkleAmount = 0.05 + Math.random() * 0.15;
-					break;
-				case "small":
-					// Size range: between medium and tiny
-					this.size = 0.8 + Math.random() * 0.8; // Size range: 0.8 to 1.6
-					this.hasStarburst = Math.random() > 0.7;
-					this.color = getRandomWeightedColor(starColors);
-					this.twinkleAmount = 0.05 + Math.random() * 0.2;
-					break;
-				case "tiny":
-				default:
-					this.size = 0.3 + Math.random() * 0.4; // Size range: 0.3 to 0.7
-					this.hasStarburst = false;
-					this.color = getRandomWeightedColor(starColors);
-					this.twinkleAmount = 0.05 + Math.random() * 0.1;
-					this.staticOpacity = 0.3 + Math.random() * 0.2;
-					break;
-            }
-            const brightnessFactor = getBrightnessFactor(CONFIG.brightness[this.type]);
-            this.baseOpacity = (0.6 + Math.random() * 0.4) * brightnessFactor;
-            this.baseOpacity = Math.min(this.baseOpacity, 1.0);
-            this.opacity = this.baseOpacity;
-            this.baseColor = this.color;
-            this.twinkleSpeed = 0.15 + Math.random() * 1.25;
-            this.twinkleOffset = Math.random() * Math.PI * 2;
-            this.colorTwinkle = Math.random() > 0.7;
-            this.twinkleColorAmount = 0.05 + Math.random() * 0.15;
-            this.flickerProbability = 0.0005 + (this.type === "tiny" ? 0.0015 : 0);
-            this.flickering = false;
-            this.flickerDuration = 0;
-            this.flickerTime = 0;
-            this.useComplexTwinkle = Math.random() > 0.7;
-            if (this.useComplexTwinkle) {
-                this.secondaryTwinkleSpeed = this.twinkleSpeed * (0.3 + Math.random() * 0.7);
-                this.secondaryTwinkleAmount = this.twinkleAmount * (0.3 + Math.random() * 0.5);
-            }
-            if (this.type === "tiny") {
-                this.staticOpacity = Math.min(this.staticOpacity * brightnessFactor, 1.0);
-            }
-
-            // Chromatic Aberration properties
-            this.caIntensity = CONFIG.chromaticAberration[this.type].intensity;
-            this.caOffsetRed = CONFIG.chromaticAberration[this.type].offsetRed;
-            this.caOffsetGreen = CONFIG.chromaticAberration[this.type].offsetGreen;
-            this.caOffsetBlue = CONFIG.chromaticAberration[this.type].offsetBlue;
-        }
-
-        updateBrightness() {
-            const brightnessFactor = getBrightnessFactor(CONFIG.brightness[this.type]);
-            this.baseOpacity = (0.6 + Math.random() * 0.4) * brightnessFactor;
-            this.baseOpacity = Math.min(this.baseOpacity, 1.0);
-            if (this.type === "tiny") {
-                this.staticOpacity = Math.min((0.3 + Math.random() * 0.2) * brightnessFactor, 1.0);
-            }
-        }
-
-        update(time) {
-            if (this.flickering) {
-                this.flickerTime++;
-                if (this.flickerTime >= this.flickerDuration) {
-                    this.flickering = false;
-                }
-                const flickerPhase = this.flickerTime / this.flickerDuration;
-                const flickerPattern = Math.sin(flickerPhase * Math.PI * 8) * 0.5 + 0.5;
-                this.opacity = this.baseOpacity * (0.5 + flickerPattern * 0.7);
-                return;
-            } else if (Math.random() < this.flickerProbability) {
-                this.flickering = true;
-                this.flickerDuration = 5 + Math.floor(Math.random() * 15);
-                this.flickerTime = 0;
-                return;
-            }
-            let twinkleFactor;
-            if (this.useComplexTwinkle) {
-                const primaryWave = Math.sin(time * this.twinkleSpeed + this.twinkleOffset);
-                const secondaryWave = Math.sin(time * this.secondaryTwinkleSpeed + this.twinkleOffset * 1.5);
-                twinkleFactor = (primaryWave * 0.7 + secondaryWave * 0.3);
-            } else {
-                twinkleFactor = Math.sin(time * this.twinkleSpeed + this.twinkleOffset);
-            }
-            const opacityMultiplier = 1 + (twinkleFactor * this.twinkleAmount);
-            this.opacity = this.baseOpacity * opacityMultiplier;
-            if (this.colorTwinkle && (this.type === "large" || this.type === "medium")) {
-                const colorShiftAmount = twinkleFactor * this.twinkleColorAmount;
-                if (colorShiftAmount > 0) {
-                    this.color = shiftColorTowards(this.baseColor, '#FFFFFF', Math.abs(colorShiftAmount));
-                } else {
-                    this.color = shiftColorTowards(this.baseColor, '#FFE4B5', Math.abs(colorShiftAmount));
-                }
-            }
-        }
+    if (params.useOffScreenCanvas) {
+      offScreenCanvas = document.createElement('canvas');
+      offScreenCanvas.width = width;
+      offScreenCanvas.height = height;
+      offScreenCtx = offScreenCanvas.getContext('2d', {
+        willReadFrequently: false,
+      });
     }
 
-    // Star collections organized by layer
-    const starsByLayer = {
-        tiny: [],
-        small: [],
-        medium: [],
-        large: []
-    };
-    const starsList = [];
+    generateStars();
+    animate();
+    window.addEventListener('resize', handleResize, {
+      passive: true,
+    });
+  }
 
-    // Drawing functions
-    const drawStarburst = (() => {
-        const angles = new Float32Array(4);
-        const cosValues = new Float32Array(4);
-        const sinValues = new Float32Array(4);
-        const angleInRadians = CONFIG.starburst.angle * Math.PI / 180;
-        for (let i = 0; i < 4; i++) {
-            angles[i] = (i * Math.PI / 2) + angleInRadians;
-            cosValues[i] = Math.cos(angles[i]);
-            sinValues[i] = Math.sin(angles[i]);
+  function resizeCanvas() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    if (offScreenCanvas) {
+      offScreenCanvas.width = width;
+      offScreenCanvas.height = height;
+    }
+  }
+
+  function handleResize() {
+    // Clear the timeout
+    clearTimeout(resizeTimeout);
+    // Set a new timeout
+    resizeTimeout = setTimeout(() => {
+      cancelAnimationFrame(animationFrameId);
+      resizeCanvas();
+      generateStars();
+      animate();
+    }, 100); // 100ms debounce time
+  }
+
+  function generateColorPalette(colorObj) {
+    const palette = [];
+    for (const color in colorObj) {
+      const weight = colorObj[color];
+      for (let i = 0; i < weight; i++) {
+        palette.push(color);
+      }
+    }
+    return palette;
+  }
+
+  function getRandomColor(sizeClass) {
+    let palette = generateColorPalette(params.basicColors);
+
+    // Check sizeClass and only concatenate if necessary
+    if (sizeClass === 'medium' && params.mediumStarColors) {
+      for (const color in params.mediumStarColors) {
+        const weight = params.mediumStarColors[color];
+        for (let i = 0; i < weight; i++) {
+          palette.push(color);
         }
-        return (ctx, star, opacity) => {
-            const rayLength = star.size * (6 + Math.random() * 1.1); // default 5 and 2
-            const lineWidth = star.size * 0.3;
-            const rayOpacity = opacity * 0.80;
-            for (let i = 0; i < 4; i++) {
-                const endX = star.x + cosValues[i] * rayLength;
-                const endY = star.y + sinValues[i] * rayLength;
-                const rayGradient = ctx.createLinearGradient(star.x, star.y, endX, endY);
-                rayGradient.addColorStop(0, star.color);
-                rayGradient.addColorStop(1, 'rgba(255, 255, 255, 0)');
-                ctx.globalAlpha = rayOpacity;
-                ctx.strokeStyle = rayGradient;
-                ctx.lineWidth = lineWidth;
-                ctx.beginPath();
-                ctx.moveTo(star.x, star.y);
-                ctx.lineTo(endX, endY);
-                ctx.stroke();
-            }
-        };
-    })();
-
-    // Draw star with Chromatic Aberration
-    const drawStar = (ctx, star) => {
-        ctx.globalAlpha = star.opacity;
-        const aberrationEnabled = CONFIG.chromaticAberration.enabled && star.caIntensity > 0;
-        const caOpacity = CONFIG.chromaticAberration.opacity;
-
-        if (star.type === "large" || star.type === "medium") {
-            // Draw starburst
-            if (star.hasStarburst) drawStarburst(ctx, star, star.opacity);
-
-            // Draw glow
-            const glowRadius = star.size * 3.5;
-            const gradient = ctx.createRadialGradient(
-                star.x, star.y, 0,
-                star.x, star.y, glowRadius
-            );
-			gradient.addColorStop(0, `rgba(255, 255, 255, 1)`); // White
-			gradient.addColorStop(0.2, `rgba(255, 255, 255, 0.9)`); // White
-			gradient.addColorStop(0.45, `rgba(${hexToRgb(star.color).r}, ${hexToRgb(star.color).g}, ${hexToRgb(star.color).b}, 0.4)`);
-			//gradient.addColorStop(1, `rgba(${hexToRgb(star.color).r}, ${hexToRgb(star.color).g}, ${hexToRgb(star.color).b}, 0)`);
-			gradient.addColorStop(1, `transparent`);
-            ctx.fillStyle = gradient;
-            ctx.beginPath();
-            ctx.arc(star.x, star.y, glowRadius, 0, Math.PI * 2);
-            ctx.fill();
-
-            // Draw core with Chromatic Aberration
-            const coreSize = star.size * 0.7;
-            if (aberrationEnabled) {
-                const intensity = star.caIntensity;
-
-                // Red channel
-                ctx.fillStyle = `rgba(255, 0, 0, ${star.opacity * (1 - intensity) * caOpacity})`;
-                ctx.beginPath();
-                ctx.arc(star.x + star.caOffsetRed, star.y, coreSize, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Green channel
-                ctx.fillStyle = `rgba(0, 255, 0, ${star.opacity * (1 - intensity) * caOpacity})`;
-                ctx.beginPath();
-                ctx.arc(star.x + star.caOffsetGreen, star.y, coreSize, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Blue channel
-                ctx.fillStyle = `rgba(0, 0, 255, ${star.opacity * (1 - intensity) * caOpacity})`;
-                ctx.beginPath();
-                ctx.arc(star.x + star.caOffsetBlue, star.y, coreSize, 0, Math.PI * 2);
-                ctx.fill();
-
-                // White core - drawn on top to prevent color tint
-                ctx.fillStyle = '#FFFFFF';
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, coreSize * 0.8, 0, Math.PI * 2);
-                ctx.fill();
-
-            } else {
-                ctx.fillStyle = '#FFFFFF';
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, coreSize, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        } else {
-            // Draw small/tiny star
-            if (aberrationEnabled) {
-                const intensity = star.caIntensity;
-                // Red channel
-                ctx.fillStyle = `rgba(255, 0, 0, ${star.opacity * (1 - intensity) * caOpacity})`;
-                ctx.beginPath();
-                ctx.arc(star.x + star.caOffsetRed, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Green channel
-                ctx.fillStyle = `rgba(0, 255, 0, ${star.opacity * (1 - intensity) * caOpacity})`;
-                ctx.beginPath();
-                ctx.arc(star.x + star.caOffsetGreen, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Blue channel
-                ctx.fillStyle = `rgba(0, 0, 255, ${star.opacity * (1 - intensity) * caOpacity})`;
-                ctx.beginPath();
-                ctx.arc(star.x + star.caOffsetBlue, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
-            } else {
-                ctx.fillStyle = star.color;
-                ctx.beginPath();
-                ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+      }
+    } else if (sizeClass === 'large' && params.largeStarColors) {
+      for (const color in params.largeStarColors) {
+        const weight = params.largeStarColors[color];
+        for (let i = 0; i < weight; i++) {
+          palette.push(color);
         }
-    };
-
-    // Animation management
-    let lastFrameTime = 0;
-    let slowFrameCount = 0;
-    let adaptiveRendering = false;
-    const minFrameInterval = 1000 / 12;
-    let frameSkipCounter = 0;
-    const skipFrameThreshold = 3;
-    let animationFrameId;
-
-    // Animation frame
-    const animateFrame = (timestamp) => {
-        const time = timestamp * 0.001;
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-
-        // Draw stars in layer order
-        for (let i = 0; i < starsByLayer.tiny.length; i++) {
-            const star = starsByLayer.tiny[i];
-            star.update(time);
-            drawStar(ctx, star);
-        }
-        for (let i = 0; i < starsByLayer.small.length; i++) {
-            const star = starsByLayer.small[i];
-            star.update(time);
-            drawStar(ctx, star);
-        }
-        for (let i = 0; i < starsByLayer.medium.length; i++) {
-            const star = starsByLayer.medium[i];
-            star.update(time);
-            drawStar(ctx, star);
-        }
-        for (let i = 0; i < starsByLayer.large.length; i++) {
-            const star = starsByLayer.large[i];
-            star.update(time);
-            drawStar(ctx, star);
-        }
-
-        ctx.globalAlpha = 1.0;
-        frameSkipCounter = (frameSkipCounter + 1) % skipFrameThreshold;
-    };
-
-    const animate = (timestamp) => {
-        if (document.hidden) {
-            animationFrameId = requestAnimationFrame(animate);
-            return;
-        }
-
-        const frameInterval = timestamp - lastFrameTime;
-        const frameTime = performance.now();
-
-        if (frameInterval >= minFrameInterval) {
-            animateFrame(timestamp);
-            lastFrameTime = timestamp;
-
-            const renderTime = performance.now() - frameTime;
-            if (renderTime > 16) {
-                slowFrameCount = Math.min(10, slowFrameCount + 1);
-                if (slowFrameCount >= 5 && !adaptiveRendering) {
-                    adaptiveRendering = true;
-                }
-            } else {
-                slowFrameCount = Math.max(0, slowFrameCount - 1);
-                if (slowFrameCount === 0 && adaptiveRendering) {
-                    adaptiveRendering = false;
-                }
-            }
-        }
-        animationFrameId = requestAnimationFrame(animate);
-    };
-
-    // Star creation
-    const createStars = () => {
-        starsList.length = 0;
-        starsByLayer.tiny.length = 0;
-        starsByLayer.small.length = 0;
-        starsByLayer.medium.length = 0;
-        starsByLayer.large.length = 0;
-
-        const baseArea = 1920 * 1200;
-        const currentArea = canvasWidth * canvasHeight;
-        const scaleFactor = Math.sqrt(currentArea / baseArea);
-
-        const largeStarCount = Math.round(CONFIG.numLargeStars * scaleFactor);
-        const mediumStarCount = Math.round(CONFIG.numMediumStars * scaleFactor);
-        const smallStarCount = Math.round(CONFIG.numSmallStars * scaleFactor);
-        const tinyStarCount = Math.round(CONFIG.numTinyStars * scaleFactor);
-
-        const createStarBatch = (count, type) => {
-            const batch = [];
-            for (let i = 0; i < count; i++) {
-                const star = new Star(type);
-                batch.push(star);
-                starsList.push(star);
-                starsByLayer[type].push(star);
-            }
-            return batch;
-        };
-
-        createStarBatch(tinyStarCount, "tiny");
-        createStarBatch(smallStarCount, "small");
-        createStarBatch(mediumStarCount, "medium");
-        createStarBatch(largeStarCount, "large");
-    };
-
-    // Update brightness of all stars
-    const updateStarBrightness = () => {
-        for (let i = 0; i < starsList.length; i++) {
-            starsList[i].updateBrightness();
-        }
-    };
-
-    // Resize handler with debouncing
-    const handleResize = (() => {
-        let resizeTimeout;
-        let lastWidth = window.innerWidth;
-        let lastHeight= window.innerHeight;
-        return () => {
-            const newWidth = window.innerWidth;
-            const newHeight = window.innerHeight;
-            if (newWidth !== lastWidth || newHeight !== lastHeight) {
-                lastWidth = canvasWidth = newWidth;
-                lastHeight = canvasHeight = newHeight;
-                clearTimeout(resizeTimeout);
-                resizeTimeout = setTimeout(() => {
-                    updateCanvasDimensions();
-                    createStars();
-                }, 200);
-            }
-        };
-    })();
-
-    window.addEventListener('resize', handleResize, { passive: true });
-
-    // Mobile device optimization
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobile) {
-        CONFIG.numLargeStars = Math.floor(CONFIG.numLargeStars * 0.7);
-        CONFIG.numMediumStars = Math.floor(CONFIG.numMediumStars * 0.6);
-        CONFIG.numSmallStars = Math.floor(CONFIG.numSmallStars * 0.5);
-        CONFIG.numTinyStars = Math.floor(CONFIG.numTinyStars * 0.4);
-        adaptiveRendering = true;
+      }
     }
 
-    // Expose API for external configuration
-    window.starfieldConfig = CONFIG;
-    window.updateStarfield = function (newConfig) {
-        const brightnessChanged = newConfig.brightness &&
-            (newConfig.brightness.large !== CONFIG.brightness.large ||
-                newConfig.brightness.medium !== CONFIG.brightness.medium ||
-                newConfig.brightness.small !== CONFIG.brightness.small ||
-                newConfig.brightness.tiny !== CONFIG.brightness.tiny);
-        for (const key in newConfig) {
-            if (typeof newConfig[key] === 'object' && newConfig[key] !== null &&
-                CONFIG.hasOwnProperty(key) && typeof CONFIG[key] === 'object') {
-                Object.assign(CONFIG[key], newConfig[key]);
-            } else {
-                CONFIG[key] = newConfig[key];
-            }
-        }
-        if (brightnessChanged && Object.keys(newConfig).length === 1) {
-            updateStarBrightness();
-        } else {
-            createStars();
-        }
-    };
+    return palette[Math.floor(Math.random() * palette.length)];
+  }
 
-    window.setAllStarBrightness = function (value) {
-        value = Math.max(0, Math.min(100, value));
-        CONFIG.brightness.large = value;
-        CONFIG.brightness.medium = value;
-        CONFIG.brightness.small = value;
-        CONFIG.brightness.tiny = value;
-        updateStarBrightness();
-    };
+  function applyBrightness(color, brightness) {
+    if (brightness === 1) return color;
 
-    window.setStarBrightness = function (type, value) {
-        value = Math.max(0, Math.min(100, value));
-        if (CONFIG.brightness.hasOwnProperty(type)) {
-            CONFIG.brightness[type] = value;
-            updateStarBrightness();
+    const hex = color.slice(1);
+    const r = parseInt(hex.slice(0, 2), 16);
+    const g = parseInt(hex.slice(2, 4), 16);
+    const b = parseInt(hex.slice(4, 6), 16);
+
+    const adjustedR = (r * brightness) | 0; // Faster Math.floor
+    const adjustedG = (g * brightness) | 0;
+    const adjustedB = (b * brightness) | 0;
+
+    const clamp = (val) => (val > 255 ? 255 : val < 0 ? 0 : val);
+
+    const clampedR = clamp(adjustedR);
+    const clampedG = clamp(adjustedG);
+    const clampedB = clamp(adjustedB);
+
+    const hexR = clampedR.toString(16).padStart(2, '0');
+    const hexG = clampedG.toString(16).padStart(2, '0');
+    const hexB = clampedB.toString(16).padStart(2, '0');
+
+    return `#${hexR}${hexG}${hexB}`;
+  }
+
+  function generatePosition() {
+    const factor = params.distribution;
+    let x = Math.random() * width;
+    let y = Math.random() * height;
+
+    if (factor > 0) {
+      const centerX = width * 0.5;
+      const centerY = height * 0.5;
+      const dx = x - centerX;
+      const dy = y - centerY;
+
+      const distanceSquared = dx * dx + dy * dy;
+
+      if (distanceSquared > 0) {
+        const angle = Math.atan2(dy, dx);
+        const adjustedDistance = Math.sqrt(distanceSquared) * Math.pow(Math.random(), factor);
+
+        x = centerX + Math.cos(angle) * adjustedDistance;
+        y = centerY + Math.sin(angle) * adjustedDistance;
+      }
+    }
+    return {
+      x,
+      y,
+    };
+  }
+
+  function generateStars() {
+    const scaleFactor = Math.min(width / params.referenceWidth, height / params.referenceHeight);
+    const layerCount = starLayers.length;
+
+    for (let layerIndex = 0; layerIndex < layerCount; layerIndex++) {
+      const size = starLayers[layerIndex];
+      stars[size] = [];
+      starAnimationData[size] = [];
+      lastTwinkleTime[size] = [];
+      starTwinkleStatus[size] = []; // Initialize the twinkle status array
+
+      if (!params.starCounts[size].enabled) continue;
+
+      const count = Math.floor(params.starCounts[size].count * scaleFactor);
+      const minSize = params.starSizes[size].min;
+      const maxSize = params.starSizes[size].max;
+      const brightness = params.brightness[size].value;
+      const twinklePercentage = params.twinkle[size].percentage; // Get twinkle percentage
+
+      const starList = stars[size];
+      const animDataList = starAnimationData[size];
+      const lastTwinkleList = lastTwinkleTime[size];
+      const twinkleStatusList = starTwinkleStatus[size]; // Get twinkle status list
+
+      for (let i = 0; i < count; i++) {
+        const {
+          x,
+          y,
+        } = generatePosition();
+        const radius = minSize + Math.random() * (maxSize - minSize);
+        const baseColor = getRandomColor(size);
+        let color = params.brightness[size].enabled ? applyBrightness(baseColor, brightness) : baseColor;
+
+        if (size === 'large' || size === 'medium') {
+          color = '#ffffff';
         }
-    };
 
-    // Initialize
-    createStars();
-    requestAnimationFrame(animate);
+        const twinklePhase = Math.random() * Math.PI * 2;
+        const burstPhase = Math.random() * Math.PI * 2;
+        const twinkleFreq2 = 0.3 + Math.random() * 0.7;
+        const shouldTwinkle = Math.random() < twinklePercentage; // Determine if this star should twinkle
+
+        starList.push({
+          x,
+          y,
+          radius,
+          color,
+          twinklePhase,
+          burstPhase,
+          baseColor,
+          twinkleFreq2,
+        });
+        animDataList[i] = {
+          actualRadius: radius,
+          actualOpacity: 1,
+          animFactors: Array(params.starburst.allSizes.rayCount).fill(1),
+        };
+        lastTwinkleList[i] = 0;
+        twinkleStatusList[i] = shouldTwinkle; // Store the twinkle status
+      }
+    }
+  }
+
+  function drawStar(ctx, star, sizeClass, time, animationData) {
+    const { x, y, radius, color } = star;
+    let { actualRadius, actualOpacity } = animationData;
+    const twinkleParams = params.twinkle[sizeClass];
+    const starIndex = stars[sizeClass].indexOf(star); // Cache index to avoid repeated lookup
+    const shouldTwinkle = starTwinkleStatus[sizeClass][starIndex];
+
+    if (twinkleParams.enabled && shouldTwinkle) {
+      const deltaTime = time - lastTwinkleTime[sizeClass][starIndex];
+      if (deltaTime >= frameInterval) {
+        const primaryWave = Math.sin(star.twinklePhase + time * twinkleParams.speed);
+        const secondaryWave = Math.sin(star.twinklePhase * star.twinkleFreq2 + time * twinkleParams.speed * 0.7) * 0.5;
+        const twinkleFactor = (primaryWave + secondaryWave) / 1.5;
+        actualRadius = radius * (1 + twinkleFactor * twinkleParams.intensityRadius);
+        actualOpacity = 1 - Math.abs(twinkleFactor) * twinkleParams.intensityOpacity;
+        lastTwinkleTime[sizeClass][starIndex] = time;
+      }
+    } else {
+      actualRadius = radius;
+      actualOpacity = 1;
+    }
+
+    // Draw Starburst if enabled
+    if (params.starburst.allSizes.enabled && params.starburst[sizeClass].enabled) {
+      drawStarburst(ctx, star, sizeClass, time, animationData);
+    }
+
+    // Draw Glow if enabled
+    if (params.glow[sizeClass].enabled) {
+      const glowColor = (sizeClass === 'large' || sizeClass === 'medium') ? star.baseColor : color;
+      drawGlow(ctx, star, actualRadius, glowColor, sizeClass);
+    }
+
+    // Draw the star
+    ctx.beginPath();
+    ctx.arc(x, y, actualRadius, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.globalAlpha = actualOpacity;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+
+  function drawStarburst(ctx, star, sizeClass, time, animationData) {
+    const { x, y, radius, baseColor } = star;
+    const rayCount = params.starburst.allSizes.rayCount;
+    let rayLength = radius * params.starburst.allSizes.rayLengthFactor;
+    const sizeFactor = { large: 1, medium: 0.7, small: 0.5, tiny: 0.3 };
+    rayLength *= sizeFactor[sizeClass];
+
+    let { animFactors } = animationData;
+    const animationSpeed = params.starburst[sizeClass].animationSpeed;
+
+    if (params.starburst[sizeClass].animate) {
+      for (let i = 0; i < rayCount; i++) {
+        const uniquePhase = star.burstPhase + i * 0.7;
+        const combinedWave = (
+          Math.sin(uniquePhase + time * animationSpeed) +
+          Math.sin(uniquePhase * 1.3 + time * animationSpeed * 2.1) * 0.3 +
+          Math.sin(uniquePhase * 0.7 + time * animationSpeed * 0.5) * 0.15 +
+          1.45
+        ) / 2.9;
+        const rayFactor = params.starburst.allSizes.minRayFactor + combinedWave * (1 - params.starburst.allSizes.minRayFactor);
+        animFactors[i] = rayFactor; // Update pre-calculated data
+      }
+    }
+
+    const angleStep = Math.PI * 2 / rayCount;
+    const startAngle = params.starburst.allSizes.angle * Math.PI / 180;
+    ctx.save();
+    ctx.globalAlpha = params.starburst.allSizes.opacity;
+
+    // Draw rays
+    for (let i = 0; i < rayCount; i++) {
+      const angle = startAngle + i * angleStep;
+      const currentRayLength = rayLength * animFactors[i];
+      const endX = x + Math.cos(angle) * currentRayLength;
+      const endY = y + Math.sin(angle) * currentRayLength;
+      const gradient = ctx.createLinearGradient(x, y, endX, endY);
+      gradient.addColorStop(0, baseColor);
+      gradient.addColorStop(1, 'transparent');
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(endX, endY);
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = radius * 0.5;
+      ctx.stroke();
+    }
+
+    ctx.restore();
+  }
+
+  function drawGlow(ctx, star, radius, glowColor, sizeClass) {
+    const {
+      x,
+      y,
+    } = star;
+    const sizeFactor = params.glow[sizeClass].sizeFactor;
+    const glowOpacity = params.glow[sizeClass].opacity;
+
+    // Precompute the glow radius once
+    const glowRadius = radius * sizeFactor;
+
+    // Convert glowColor to RGB once, instead of every time
+    const r = parseInt(glowColor.slice(1, 3), 16);
+    const g = parseInt(glowColor.slice(3, 5), 16);
+    const b = parseInt(glowColor.slice(5, 7), 16);
+
+    // Prepare the gradient - Create it once and reuse it as needed
+    const gradient = ctx.createRadialGradient(x, y, radius * 0.5, x, y, glowRadius);
+    gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
+    gradient.addColorStop(0.3, `rgba(${r}, ${g}, ${b}, ${glowOpacity})`);
+    gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+    // Save the context state and set glow effect
+    ctx.save(); // Save state before drawing glow
+
+    // Set the fillStyle to the precomputed gradient
+    ctx.fillStyle = gradient;
+
+    // Draw the glow with a circle
+    ctx.beginPath();
+    ctx.arc(x, y, glowRadius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.restore(); // Restore state to avoid affecting other drawings
+  }
+
+  function applyBlur(ctx, sizeClass) {
+    if (params.blur[sizeClass].enabled && params.blur[sizeClass].amount > 0) {
+      // Apply blur once per layer instead of for each star
+      ctx.filter = `blur(${params.blur[sizeClass].amount}px)`;
+    }
+  }
+
+  function resetFilters(ctx) {
+    ctx.filter = 'none'; // Reset after drawing each layer
+  }
+
+  function drawStars(timestamp = 0) {
+    const time = timestamp;
+    const drawCtx = params.useOffScreenCanvas ? offScreenCtx : ctx;
+
+    // Clear the entire canvas before drawing
+    drawCtx.clearRect(0, 0, width, height);
+
+    // Process each star layer once
+    for (const layer of starLayers) {
+      if (!params.starCounts[layer].enabled) continue;
+
+      // Apply blur filter once for the layer, instead of for each star
+      applyBlur(drawCtx, layer);
+
+      // Draw all stars in the current layer
+      for (let i = 0; i < stars[layer].length; i++) {
+        const star = stars[layer][i];
+        const animationData = starAnimationData[layer][i]; // Pre-calculated data for the star
+        drawStar(drawCtx, star, layer, time, animationData); // Pass pre-calculated data to drawing function
+      }
+
+      // Reset the filter after the entire layer is drawn
+      resetFilters(drawCtx);
+    }
+
+    // If using offscreen canvas, transfer the drawn content to the main canvas
+    if (params.useOffScreenCanvas) {
+      ctx.clearRect(0, 0, width, height);
+      ctx.drawImage(offScreenCanvas, 0, 0);
+    }
+  }
+
+  function animate(timestamp = 0) {
+    const globalFrameRate = params.globalFramerate;
+    const frameInterval = 1000 / globalFrameRate;
+    if (timestamp - lastFrameTime >= frameInterval) {
+      drawStars(timestamp);
+      lastFrameTime = timestamp; // Update lastFrameTime for animation
+    }
+
+    // Calculate and display FPS
+    //calculateFPS(timestamp);
+
+    animationFrameId = requestAnimationFrame(animate);
+  }
+
+  // Function to calculate and display FPS
+  let fpsLastTime = 0; // Keep a separate variable for FPS calculation
+
+  function calculateFPS(currentTime) {
+    if (!fpsLastTime) {
+      fpsLastTime = currentTime;
+      return;
+    }
+
+    const deltaTime = currentTime - fpsLastTime;
+    const fps = 1000 / deltaTime;
+    fpsLastTime = currentTime;
+
+    ctx.font = '16px sans-serif';
+    ctx.fillStyle = '#ffffff';
+    ctx.textAlign = 'right';
+    ctx.fillText(`FPS: ${fps.toFixed(1)}`, width - 10, 20);
+  }
+
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "visible") {
+      if (!animationFrameId) {
+        animate();
+      }
+    } else {
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = null;
+    }
+  }, {
+    passive: true
+  });
+
+  init();
 });
