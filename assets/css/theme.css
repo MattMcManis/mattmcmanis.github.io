@@ -123,6 +123,13 @@ canvas {
 	background: transparent;
 }
 
+#layout-content {
+    position: relative;
+    z-index: 4;
+    display: flex;
+    text-align: center;
+}
+
 #starsCanvas {
     z-index: 3;
 	background: transparent;
@@ -138,12 +145,6 @@ canvas {
 	background: transparent;
 }
 
-#layout-content {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    text-align: center;
-}
 
 /* =============================================
    Header
