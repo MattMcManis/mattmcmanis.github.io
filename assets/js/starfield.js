@@ -34,7 +34,7 @@ window.addEventListener("DOMContentLoaded", function () {
 	  allSizes: {
 		enabled: true,
 		rayCount: 4,
-		rayLengthFactor: 12,
+		rayLengthFactor: 9,
 		angle: 0,
 		opacity: 0.8,
 		minRayFactor: 0.80,
@@ -45,7 +45,7 @@ window.addEventListener("DOMContentLoaded", function () {
 	  tiny: { enabled: false, animate: true, animationSpeed: 0 },
 	},
 	glow: {
-	  large: { enabled: true, sizeFactor: 5.25, opacity: 0.35 },
+	  large: { enabled: true, sizeFactor: 4.75, opacity: 0.35  },
 	  medium: { enabled: true, sizeFactor: 3.75, opacity: 0.3 },
 	  small: { enabled: false, sizeFactor: 2.75, opacity: 0.2 },
 	  tiny: { enabled: false, sizeFactor: 1.75, opacity: 0.1 },
@@ -521,52 +521,60 @@ window.addEventListener("DOMContentLoaded", function () {
   }
 
   function drawStarburst(ctx, star, sizeClass, time, animationData) {
-	const { x, y, radius, baseColor } = star;
-	const rayCount = params.starburst.allSizes.rayCount;
-	let rayLength = radius * params.starburst.allSizes.rayLengthFactor;
-	const sizeFactor = { large: 1, medium: 0.7, small: 0.5, tiny: 0.3 };
-	rayLength *= sizeFactor[sizeClass];
+    const { x, y, radius, baseColor } = star;
+    const rayCount = params.starburst.allSizes.rayCount;
+    let rayLength = radius * params.starburst.allSizes.rayLengthFactor;
+    const sizeFactor = { large: 1, medium: 0.7, small: 0.5, tiny: 0.3 };
+    rayLength *= sizeFactor[sizeClass];
 
-	let { animFactors } = animationData;
-	const animationSpeed = params.starburst[sizeClass].animationSpeed;
+    let { animFactors } = animationData;
+    const animationSpeed = params.starburst[sizeClass].animationSpeed;
 
-	if (params.starburst[sizeClass].animate) {
-	  for (let i = 0; i < rayCount; i++) {
-		const uniquePhase = star.burstPhase + i * 0.7;
-		const combinedWave = (
-		  Math.sin(uniquePhase + time * 0.001 * animationSpeed) +
-		  Math.sin(uniquePhase * 1.3 + time * 0.001 * animationSpeed * 2.1) * 0.3 +
-		  Math.sin(uniquePhase * 0.7 + time * 0.001 * animationSpeed * 0.5) * 0.15 +
-		  1.45
-		) / 2.9;
-		const rayFactor = params.starburst.allSizes.minRayFactor + combinedWave * (1 - params.starburst.allSizes.minRayFactor);
-		animFactors[i] = rayFactor;
-	  }
-	}
+    if (params.starburst[sizeClass].animate) {
+    // Calculate a single animation factor for all rays
+    const uniquePhase = star.burstPhase;
+    const combinedWave = (
+      Math.sin(uniquePhase + time * 0.001 * animationSpeed) +
+      Math.sin(uniquePhase * 1.3 + time * 0.001 * animationSpeed * 2.1) * 0.3 +
+      Math.sin(uniquePhase * 0.7 + time * 0.001 * animationSpeed * 0.5) * 0.15 +
+      1.45
+    ) / 2.9;
+    const rayFactor = params.starburst.allSizes.minRayFactor + combinedWave * (1 - params.starburst.allSizes.minRayFactor);
+    
+    // Apply the same factor to all rays
+    for (let i = 0; i < rayCount; i++) {
+      animFactors[i] = rayFactor;
+    }
+    }
 
-	const angleStep = Math.PI * 2 / rayCount;
-	const startAngle = params.starburst.allSizes.angle * Math.PI / 180;
-	ctx.save();
-	ctx.globalAlpha = params.starburst.allSizes.opacity;
+    const angleStep = Math.PI * 2 / rayCount;
+    const startAngle = params.starburst.allSizes.angle * Math.PI / 180;
+    ctx.save();
+    ctx.globalAlpha = params.starburst.allSizes.opacity;
+    
+    // Parse baseColor RGB
+    const r = parseInt(baseColor.slice(1, 3), 16);
+    const g = parseInt(baseColor.slice(3, 5), 16);
+    const b = parseInt(baseColor.slice(5, 7), 16);
 
-	// Draw rays
-	for (let i = 0; i < rayCount; i++) {
-	  const angle = startAngle + i * angleStep;
-	  const currentRayLength = rayLength * animFactors[i];
-	  const endX = x + Math.cos(angle) * currentRayLength;
-	  const endY = y + Math.sin(angle) * currentRayLength;
-	  const gradient = ctx.createLinearGradient(x, y, endX, endY);
-	  gradient.addColorStop(0, baseColor);
-	  gradient.addColorStop(1, 'transparent');
-	  ctx.beginPath();
-	  ctx.moveTo(x, y);
-	  ctx.lineTo(endX, endY);
-	  ctx.strokeStyle = gradient;
-	  ctx.lineWidth = radius * 0.5;
-	  ctx.stroke();
-	}
+    // Draw rays
+    for (let i = 0; i < rayCount; i++) {
+      const angle = startAngle + i * angleStep;
+      const currentRayLength = rayLength * animFactors[i];
+      const endX = x + Math.cos(angle) * currentRayLength;
+      const endY = y + Math.sin(angle) * currentRayLength;
+      const gradient = ctx.createLinearGradient(x, y, endX, endY);
+      gradient.addColorStop(0, baseColor);
+      gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+      ctx.beginPath();
+      ctx.moveTo(x, y);
+      ctx.lineTo(endX, endY);
+      ctx.strokeStyle = gradient;
+      ctx.lineWidth = radius * 0.5;
+      ctx.stroke();
+    }
 
-	ctx.restore();
+    ctx.restore();
   }
 
   function drawGlow(ctx, star, radius, glowColor, sizeClass) {
@@ -582,8 +590,9 @@ window.addEventListener("DOMContentLoaded", function () {
 
 	const gradient = ctx.createRadialGradient(x, y, radius * 0.5, x, y, glowRadius);
 	gradient.addColorStop(0, 'rgba(255, 255, 255, 1)');
-	gradient.addColorStop(0.3, `rgba(${r}, ${g}, ${b}, ${glowOpacity})`);
-	gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+	gradient.addColorStop(0.35, `rgba(${r}, ${g}, ${b}, ${glowOpacity})`);
+	gradient.addColorStop(0.7, `rgba(${r}, ${g}, ${b}, ${glowOpacity * 0.3})`);
+	gradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
 
 	ctx.save();
 	ctx.fillStyle = gradient;
